@@ -1,6 +1,6 @@
     <footer class="main-footer" style="background-color: rgb(0, 0, 0); bottom: 0; position: revert;
       color: whitesmoke; position: fixed;width: 100%;height: auto; ">
-      <strong>{{ $setting->footer_copyright}}</strong>
+      {{-- <strong>{{ $setting->footer_copyright}}</strong> --}}
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>

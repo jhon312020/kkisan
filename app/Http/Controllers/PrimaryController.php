@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Primary_Label;
+use App\Models\PrimaryLabel;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Vote;
@@ -38,7 +38,7 @@ class PrimaryController extends Controller {
   // }
 
   public function index() {
-    $primaries = Primary_Label::paginate(10);
+    $primaries = PrimaryLabel::paginate(10);
     return view('/primaryHome',['primaries' => $primaries]);
   }
 
@@ -117,7 +117,7 @@ class PrimaryController extends Controller {
 
     ]);
     if ( $validator->passes() ) {
-      $primaries = new Primary_Label();
+      $primaries = new PrimaryLabel();
       $primaries->product_code = $request->product_id;
       $primaries->manufacturer_name = $request->manufacturer_name;
       $primaries->supplier_name = $request->supplier_name;
@@ -145,12 +145,12 @@ class PrimaryController extends Controller {
   }
 
   public function edit($id) {
-    $primary = Primary_Label::find($id);
+    $primary = PrimaryLabel::find($id);
     return view('primaries.edit',['primary'=>$primary]); 
   }
 
   public function update($id, Request $request) {
-    $primaries = Primary_Label::find($id);
+    $primaries = PrimaryLabel::find($id);
     $validator = Validator::make($request->all(),[
 
       'secondary' => ['string', 'max:255'],
@@ -168,7 +168,7 @@ class PrimaryController extends Controller {
 
     ]);
     if( $validator->passes() ) {
-      $primaries = Primary_Label::find($id);
+      $primaries = PrimaryLabel::find($id);
       $primaries->secondary = $request->secondary;
       $primaries->applicationid = $request->applicationid;
       $primaries->primary_code = $request->primary_code;
@@ -191,7 +191,7 @@ class PrimaryController extends Controller {
   }
 
   public function destroy($id, Request $request) {
-    $primary = Primary_Label::find($id);
+    $primary = PrimaryLabel::find($id);
     $primary->delete(); 
     Alert::success('Success', 'Primary Deleted Successfully');
     return redirect()->back();
@@ -206,8 +206,8 @@ class PrimaryController extends Controller {
 
   public function deleteprimary(Request $request){
     $ids = $request->ids;
-    $primary = Primary_Label::whereIn('id', $ids)->get();
-    Primary_Label::whereIn('id', $ids)->delete();
+    $primary = PrimaryLabel::whereIn('id', $ids)->get();
+    PrimaryLabel::whereIn('id', $ids)->delete();
     Alert::success('Success', 'Primary Deleted Successfully');
     return redirect()->back();
   }

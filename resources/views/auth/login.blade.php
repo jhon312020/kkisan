@@ -8,7 +8,7 @@
             <div class="card">
                 <!-- <div class="card-header">{{ __('Login') }}</div> -->
                 <div class="card-body">
-                  <div class="card-body-header"><center><strong>{{ $setting->meta_title_home }} {{ __('User Login') }}</strong></center></div>
+                  <div class="card-body-header"><center><strong> {{ __('User Login') }}</strong></center></div>
                   <br>
                     <form method="POST" action="{{ route('login') }}">
                         @csrf

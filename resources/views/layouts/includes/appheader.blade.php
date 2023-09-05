@@ -8,8 +8,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{ $setting->meta_title_home}}</title>
-    <link rel="icon" type="images/x-icon" href="{{ asset( $setting->favicon ) }}" />
+    {{-- <title>{{ $setting->meta_title_home}}</title> --}}
+    {{-- <link rel="icon" type="images/x-icon" href="{{ asset( $setting->favicon ) }}" /> --}}
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 

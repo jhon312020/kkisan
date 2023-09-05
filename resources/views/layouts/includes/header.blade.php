@@ -4,8 +4,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $setting->meta_title_home}}</title>
-    <link rel="icon" type="images/x-icon" href="{{ asset( $setting->favicon ) }}" />
+    {{-- <title>{{ $setting->meta_title_home}}</title> --}}
+    {{-- <link rel="icon" type="images/x-icon" href="{{ asset( $setting->favicon ) }}" /> --}}
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/css/adminlte.min.css">
 
@@ -176,12 +176,20 @@
                             </p>
                           </a>
                         </li> -->
+                        <li class="nav-item">
+                          <a href="#" class="nav-link">
+                            <i class="fa-brands fa-product-hunt"></i>
+                            <p>
+                               Home
+                            </p>
+                          </a>
+                        </li>
 
                         <li class="nav-item">
                           <a href="{{ route('products.create') }}" class="nav-link">
                             <i class="fa-brands fa-product-hunt"></i>
                             <p>
-                               Add Product
+                               Products
                             </p>
                           </a>
                         </li>
@@ -190,7 +198,7 @@
                           <a href="{{ route('primaries.create') }}" class="nav-link">
                             <i class="fa-solid fa-tag"></i>
                             <p>
-                               Add Primary Lable
+                               Add Primary Label
                             </p>
                           </a>
                         </li>  
