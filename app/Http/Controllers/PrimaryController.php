@@ -1,66 +1,32 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\PrimaryLabel;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\Vote;
 use App\Models\Product;
-use App\Models\Candidate;
-use App\Models\Position;
-use App\Models\About;
-use App\Models\Contact;
-use App\Models\Enquiry;
-use App\Models\Country;
 use Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
-use LaravelDaily\LaravelCharts\Classes\LaravelChart;
-use ConsoleTVs\Charts\Classes\Chartjs\Chart;
-use App\Charts\CandidateVotesChart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
 class PrimaryController extends Controller {
-  // public function index(Request $request) {
-  //   $search = $request['search'] ?? "";
-  //   if ($search != "") {
-  //       $primaries = primary::where('name', 'LIKE', "%$search%")
-  //                   ->orWhere('code', 'LIKE', "%$search%")->paginate(10);
-  //   } else {
-  //       $primaries = primary::paginate(10);
-  //   }
-  //   $data = compact('primaries','search');
-  //   return view('/primaryHome')->with($data);
-  // }
 
   public function index() {
     $primaries = PrimaryLabel::paginate(10);
-    return view('/primaryHome',['primaries' => $primaries]);
-  }
-
-  function fetchAPIData($requestURL) { 
-    $apiURL = "https://kkisan.karnataka.gov.in/KKISANQRAPI/api/";
-    $dataURL = $apiURL.$requestURL;
-    $ch = curl_init($dataURL);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $contents = curl_exec($ch);
-    $data = json_decode($contents);
-    return $data; curl_close($ch);
+    return view('primaries.index',['primaries' => $primaries]);
   }
 
   public function create() {
     $guoms = $this->fetchAPIData('GetUnitOfMeasurements');
     $applications = $this->fetchAPIData('Master/GetKKISANApplications');
-    $categorries = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
-    $subcategorries = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
+    $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
+    $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
     $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
     $products = Product::paginate(10);
-    return view('primaries.create',compact('guoms','applications','categorries','subcategorries','item','products'));
+    return view('primaries.create',compact('guoms','applications','categories','subcategories','item','products'));
   }
 
   public function getRelatedData(Request $request) {
@@ -72,35 +38,27 @@ class PrimaryController extends Controller {
   public function store(Request $request) {
     $guoms = $this->fetchAPIData('GetUnitOfMeasurements');
     $applications = $this->fetchAPIData('Master/GetKKISANApplications');
-    $categorries = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
-    $subcategorries = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
+    $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
+    $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
     $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
     $searchCategoryName = $request->category;
-      $itemCategoryId = null;
-      foreach ($categorries as $item) {
-          if ($item->ItemCategoryName == $searchCategoryName) {
-              $itemCategoryId = $item->ItemCategoryID;
-              break;
-          }
+    $itemCategoryId = null;
+    foreach ($categories as $item) {
+      if ($item->ItemCategoryName == $searchCategoryName) {
+        $itemCategoryId = $item->ItemCategoryID;
+        break;
       }
-      $searchSubCategoryName = $request->sub_category;
-      $subCategoryId = null;
-      foreach ($subcategorries as $item) {
-          if ($item->SubCategoryName == $searchSubCategoryName) {
-              $subCategoryId = $item->SubCategoryID;
-              break;
-          }
+    }
+    $searchSubCategoryName = $request->sub_category;
+    $subCategoryId = null;
+    foreach ($subcategories as $item) {
+      if ($item->SubCategoryName == $searchSubCategoryName) {
+        $subCategoryId = $item->SubCategoryID;
+        break;
       }
-      $qrcode = rand(1000000000, 9999999999);
-
-      // if ($itemCategoryId !== null) {
-      //     echo "ItemCategoryID: " . $itemCategoryId;
-      // } else {
-      //     echo "SubCategory not found.";
-      // }
-      // dd($request->all());
+    }
+    $qrcode = rand(1000000000, 9999999999);
     $validator = Validator::make($request->all(),[
-
       'product_id' => ['required'],
       'manufacturer_name' => ['required'],
       'supplier_name' => ['required'],
@@ -114,9 +72,8 @@ class PrimaryController extends Controller {
       'exp_date' => ['required'],
       'quantity' => ['required'],
       'mrp' => ['required'],
-
     ]);
-    if ( $validator->passes() ) {
+    if ($validator->passes()) {
       $primaries = new PrimaryLabel();
       $primaries->product_code = $request->product_id;
       $primaries->manufacturer_name = $request->manufacturer_name;
@@ -152,7 +109,6 @@ class PrimaryController extends Controller {
   public function update($id, Request $request) {
     $primaries = PrimaryLabel::find($id);
     $validator = Validator::make($request->all(),[
-
       'secondary' => ['string', 'max:255'],
       'applicationid' => ['string', 'max:255'],
       'primary_code' => ['string', 'max:255'],
@@ -165,9 +121,8 @@ class PrimaryController extends Controller {
       'brand_name' => ['string', 'max:255'],
       'weight' => ['string', 'max:255'],
       'uomid' => ['string', 'max:255'],
-
     ]);
-    if( $validator->passes() ) {
+    if ($validator->passes() ) {
       $primaries = PrimaryLabel::find($id);
       $primaries->secondary = $request->secondary;
       $primaries->applicationid = $request->applicationid;
@@ -197,13 +152,6 @@ class PrimaryController extends Controller {
     return redirect()->back();
   }
 
-  // public function deletetype(Request $request){
-  //   $ids = $request->ids;
-  //   Type::whereIn('id', $ids)->delete();
-  //   Alert::success('Success', 'Bus Type Deleted Successfully');
-  //   return redirect()->back();
-  // }
-
   public function deleteprimary(Request $request){
     $ids = $request->ids;
     $primary = PrimaryLabel::whereIn('id', $ids)->get();
@@ -211,4 +159,8 @@ class PrimaryController extends Controller {
     Alert::success('Success', 'Primary Deleted Successfully');
     return redirect()->back();
   }
+
+  public function view($id) { 
+    $primary = PrimaryLabel::find($id); return view('primaries.view',['primary'=>$primary]);  
+  }  
 }

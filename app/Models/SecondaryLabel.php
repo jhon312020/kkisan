@@ -3,11 +3,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Application extends Model {
+class SecondaryLabel extends Model {
   use HasFactory;
-  public $timestamps = true;
   protected $fillable = [
-    'name',
+    'product_code',
+    'batch_number',
+    'serial_number',
+    'manufacture_date',
+    'expiry_date',
+    'qr_code',
     'status',
   ];
 }

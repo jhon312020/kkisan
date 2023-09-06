@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PermissionController;
@@ -8,7 +7,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PrimaryController;
-use App\Models\Welcome;
+use App\Http\Controllers\SecondaryController;
+use App\Http\Controllers\CronController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,49 +25,34 @@ Route::get('/', function () {
     return view('/auth/login');
 });
 
-// Route::get('/show-data', function () {
-//     $under = Advertisement::where('location','=',1)->first();
-//     $under1 = Advertisement::where('location','=',1)->first();
-//     return view('above-header1', compact('under'))
-//         ->with('aboveHeader2', $under1)
-// });
-
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// Route::get('/', 'VoterHomeController@index')->name('voter.home');
-
-Route::get('/userindex', [App\Http\Controllers\VoterAuthController::class, 'index'])->name('userindex');
-
-Route::put('/passwordupdate',[App\Http\Controllers\VoterAuthController::class,'passwordupdate']);
+Route::get('/home', [HomeController::class, 'index'])->name('home.home');
 
 Route::group(['middleware' => ['auth']], function() {
-// Route::group(['middleware' => ['role:sadmin']] , function () {
 
-Route::get('/sadminindex', [App\Http\Controllers\HomeController::class, 'sadminindex'])->name('sadminindex');
-
-Route::get('/settingHome', [App\Http\Controllers\SettingController::class, 'index'])->name('settingHome');
+Route::get('/settingHome', [SettingController::class, 'index'])->name('settingHome');
 
 Route::post('/delete-settings', [SettingController::class, 'deletesetting'])->name('deletesetting');
 
 Route::resource('settings',SettingController::class);
 
-Route::get('/productHome', [App\Http\Controllers\ProductController::class, 'index'])->name('productHome');
+Route::get('/productHome', [ProductController::class, 'index'])->name('productHome');
 
 Route::post('/delete-products', [ProductController::class, 'deleteproduct'])->name('deleteproduct');
 
 Route::resource('products',ProductController::class);
+Route::get('/products/view/{id}', [ProductController::class, 'view'])->name('products.view');
+Route::get('/get-related-data',[PrimaryController::class, 'getRelatedData']);
 
-Route::get('/get-related-data',[App\Http\Controllers\PrimaryController::class, 'getRelatedData']);
-
-Route::get('/primaryHome', [App\Http\Controllers\PrimaryController::class, 'index'])->name('primaryHome');
+Route::get('/primaryHome', [PrimaryController::class, 'index'])->name('primaryHome');
 
 Route::post('/delete-primaries', [PrimaryController::class, 'deleteprimary'])->name('deleteprimary');
 
 Route::resource('primaries',PrimaryController::class);
+Route::get('/primaries/view/{id}', [PrimaryController::class, 'view'])->name('primaries.view');
 
-Route::get('/adminindex', [App\Http\Controllers\HomeController::class, 'count'])->name('count');
+Route::get('/adminindex', [HomeController::class, 'count'])->name('count');
 
 Route::resource('/permissions',PermissionController::class);
 
@@ -85,7 +70,7 @@ Route::post('/delete-permissions', [PermissionController::class, 'deletepermissi
 
 Route::post('/delete-roles', [RoleController::class, 'deleterole'])->name('deleterole');
 
-Route::get('/adminHome', [App\Http\Controllers\AdminController::class, 'index'])->name('adminhome');
+Route::get('/adminHome', [AdminController::class, 'index'])->name('adminhome');
 
 Route::post('/delete-users', [AdminController::class, 'deleteUsers'])->name('deleteUsers');
 
@@ -100,5 +85,12 @@ Route::delete('/users/{user}/roles/{role}',[AdminController::class, 'removeRole'
 Route::post('/users/{user}/permissions',[AdminController::class, 'givePermission'])->name('users.permissions');
 
 Route::delete('/users/{user}/permissions/{permission}',[AdminController::class, 'revokePermission'])->name('users.permissions.revoke');
+Route::get('/get-srelated-data',[SecondaryController::class, 'getSRelatedData']);
+Route::get('/secondaries/index',[SecondaryController::class, 'index'])->name('secondaries.index');
+Route::get('/secondaries/create',[SecondaryController::class, 'create'])->name('secondaries.create');
+//Added by MMC
+Route::get('/cron/getApplications', [CronController::class, 'getApplications'])->name('applications');
+Route::get('/cron/getUnitOfMeasurements', [CronController::class, 'getUnitOfMeasurements'])->name('getUnitOfMeasurements');
+Route::get('/cron/getCategories', [CronController::class, 'getCategories'])->name('getCategories');
 
 });

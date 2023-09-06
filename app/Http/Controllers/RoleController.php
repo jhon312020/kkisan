@@ -1,18 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
-
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\Vote;
-use App\Models\Voter;
-use App\Models\Candidate;
-use App\Models\Position;
-use App\Models\About;
-use App\Models\Contact;
-use App\Models\Enquiry;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Auth;
@@ -20,9 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
-use LaravelDaily\LaravelCharts\Classes\LaravelChart;
-use ConsoleTVs\Charts\Classes\Chartjs\Chart;
-use App\Charts\CandidateVotesChart;
 
 class RoleController extends Controller {
    public function index() {  

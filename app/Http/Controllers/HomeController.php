@@ -1,20 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Product;
 use Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use RealRashid\SweetAlert\Facades\Alert;
-use LaravelDaily\LaravelCharts\Classes\LaravelChart;
-use App\Charts\CandidateVotesChart;
-use ConsoleTVs\Charts\Classes\Chartjs\Chart;
-use Charts;
-
 
 class HomeController extends Controller {
     /**
@@ -31,8 +21,9 @@ class HomeController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index() {
-       return view('home');
+    public function index() { 
+      $productCount = Product::count(); 
+      return view('home',compact('productCount'));
     }
 
 }

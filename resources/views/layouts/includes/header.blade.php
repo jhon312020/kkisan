@@ -160,8 +160,11 @@
                   <a href="#" class="d-block">{{ auth()->user()->name }}</a>
                 </div>
               </div>
-
-               <nav class="mt-2">
+              <?php 
+                $routeArray = request()->route()->getAction();
+                list($controllerName, $actionName) = explode('.', $routeArray['as']);
+              ?>
+              <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
                   <li class="nav-item menu-open">
@@ -178,7 +181,7 @@
                         </li> -->
                         <li class="nav-item">
                           <a href="#" class="nav-link">
-                            <i class="fa-brands fa-product-hunt"></i>
+                            <i class="fa fa-home"></i>
                             <p>
                                Home
                             </p>
@@ -186,7 +189,7 @@
                         </li>
 
                         <li class="nav-item">
-                          <a href="{{ route('products.create') }}" class="nav-link">
+                          <a href="{{ route('products.index') }}" class="nav-link <?php echo ($controllerName=="products")? "active":null ?>">
                             <i class="fa-brands fa-product-hunt"></i>
                             <p>
                                Products
@@ -195,13 +198,21 @@
                         </li>
 
                         <li class="nav-item">
-                          <a href="{{ route('primaries.create') }}" class="nav-link">
+                          <a href="{{ route('primaries.index') }}" class="nav-link <?php echo ($controllerName=="primaries")? "active":null ?>">
                             <i class="fa-solid fa-tag"></i>
                             <p>
-                               Add Primary Label
+                               Primary Labels
                             </p>
                           </a>
-                        </li>  
+                        </li> 
+                         <li class="nav-item">
+                          <a href="{{ url('/secondaries/index') }}" class="nav-link <?php echo ($controllerName=="secondaries")? "active":null ?>">
+                            <i class="fa-solid fa-tag"></i>
+                            <p>
+                               Secondary Labels
+                            </p>
+                          </a>
+                        </li>   
 
                       </li>
                     </ul>
@@ -213,22 +224,4 @@
 
           </aside>
     </div>
-
-  <script type="text/javascript">
-    $(function () {
-      var url = window.location;
-      // for single sidebar menu
-      $('ul.nav-sidebar a').filter(function () {
-          return this.href == url;
-      }).addClass('active');
-
-      // for sidebar menu and treeview
-      $('ul.nav-treeview a').filter(function () {
-          return this.href == url;
-      }).parentsUntil(".nav-sidebar > .nav-treeview")
-          .css({'display': 'block'})
-          .addClass('menu-open').prev('a')
-          .addClass('active');
-    });
-  </script>
 </div>

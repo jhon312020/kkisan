@@ -1,18 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
-
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\Vote;
-use App\Models\Voter;
-use App\Models\Candidate;
-use App\Models\Position;
-use App\Models\About;
-use App\Models\Contact;
-use App\Models\Enquiry;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Auth;
@@ -25,7 +16,7 @@ use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 use App\Charts\CandidateVotesChart;
 
 class PermissionController extends Controller {
-   public function index() {
+  public function index() {
     $permissions = Permission::paginate(10);
     return view('permissions.index',['permissions' => $permissions]);  
     // return view('permissions.index');
@@ -37,9 +28,7 @@ class PermissionController extends Controller {
 
   public function store(Request $request) {
     $validator = Validator::make($request->all(),[
-
       'name' => ['required', 'string', 'max:255'],
-
     ]);
     if ( $validator->passes() ) {
       $permission = new Permission();
@@ -62,11 +51,9 @@ class PermissionController extends Controller {
   public function update($id, Request $request) {
     $permission = Permission::find($id);
     $validator = Validator::make($request->all(),[
-
       'name' => ['required', 'string', 'max:255'],
-
     ]);
-    if( $validator->passes() ) {
+    if ($validator->passes() ) {
       $permission = Permission::find($id);
       $permission->name = $request->name;
       $permission->save();
@@ -78,45 +65,36 @@ class PermissionController extends Controller {
     }
   }
 
-  // public function destroy($id, Request $request) {
-  //   $id = $request->ids;
-  //   $permission = Permission::find($id);
-  //   $permission->delete(); 
-  //   Alert::success('Success', 'Permission Deleted Successfully');
-  //   return redirect()->back();
-  // }
-
-    public function deletepermission(Request $request){
-      $ids = $request->ids;
-      if ( $ids != null ) {
+  public function deletepermission(Request $request) {
+    $ids = $request->ids;
+    if ($ids != null) {
       $permission = Permission::whereIn('id', $ids)->get();
       Permission::whereIn('id', $ids)->delete();
       Alert::success('Success', 'Permission Deleted Successfully');
       return redirect()->back();
-      }
-       else {
-        Alert::error('Error', 'Please Select At Least One Record');
-        return redirect()->back();
-      }
-    }
-
-    public function assignRole(Request $request, Permission $permission) {
-      if( $permission->hasRole($request->role)){
-        Alert::error('Error', 'Role Exsit');
-        return redirect()->back();   
-      } 
-      $permission->assignRole($request->role);
-       Alert::success('Success', 'Role Assign This Permission Successfully');
+    } else {
+      Alert::error('Error', 'Please Select At Least One Record');
       return redirect()->back();
     }
+  }
 
-    public function removeRole(Permission $permission,Role $role ) {
-      if( $permission->hasRole($role)){
-        $permission->removeRole($role);
-        Alert::success('Success', 'Role Revoked This Permission Successfully');
-        return redirect()->back();   
-      } 
-       Alert::error('Error', 'Role Not Exsit');
-      return redirect()->back();
-    }
+  public function assignRole(Request $request, Permission $permission) {
+    if ($permission->hasRole($request->role)) {
+      Alert::error('Error', 'Role Exsit');
+      return redirect()->back();   
+    } 
+    $permission->assignRole($request->role);
+    Alert::success('Success', 'Role Assign This Permission Successfully');
+    return redirect()->back();
+  }
+
+  public function removeRole(Permission $permission,Role $role ) {
+    if ($permission->hasRole($role)) {
+      $permission->removeRole($role);
+      Alert::success('Success', 'Role Revoked This Permission Successfully');
+      return redirect()->back();   
+    } 
+    Alert::error('Error', 'Role Not Exsit');
+    return redirect()->back();
+  }
 }

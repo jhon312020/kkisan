@@ -3,11 +3,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Application extends Model {
+class SubCategory extends Model {
   use HasFactory;
-  public $timestamps = true;
   protected $fillable = [
     'name',
+    'item_category_id',
+    'sub_category_id',
     'status',
   ];
 }

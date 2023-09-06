@@ -1,63 +1,21 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\Vote;
 use App\Models\products;
-use App\Models\Candidate;
-use App\Models\Position;
-use App\Models\About;
-use App\Models\Contact;
-use App\Models\Enquiry;
-use App\Models\Country;
 use Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
-use LaravelDaily\LaravelCharts\Classes\LaravelChart;
-use ConsoleTVs\Charts\Classes\Chartjs\Chart;
-use App\Charts\CandidateVotesChart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
 class ProductController extends Controller {
-  // public function index(Request $request) {
-  //   $search = $request['search'] ?? "";
-  //   if ($search != "") {
-  //       $products = Product::where('name', 'LIKE', "%$search%")
-  //                   ->orWhere('code', 'LIKE', "%$search%")->paginate(10);
-  //   } else {
-  //       $products = Product::paginate(10);
-  //   }
-  //   $data = compact('products','search');
-  //   return view('/productHome')->with($data);
-  // }
-
   public function index() {
     $products = Product::paginate(10);
-    return view('/productHome',['products' => $products]);
-  }
-
-  function fetchAPIData($requestURL) { 
-    $apiURL = "https://kkisan.karnataka.gov.in/KKISANQRAPI/api/";
-    $dataURL = $apiURL.$requestURL;
-    $ch = curl_init($dataURL);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $contents = curl_exec($ch);
-    if ($contents === false) {
-      // echo 'Curl error: ' . curl_error($ch);
-    } else {
-      echo 'Operation completed without any errors';
-    }
-
-    $data = json_decode($contents);
-    curl_close($ch);
-    return $data;
+    return view('products.index',['products' => $products]);
   }
 
   public function create() {
@@ -66,14 +24,6 @@ class ProductController extends Controller {
     $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
     $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
     $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
-    // exit;
-    // echo '<pre>';
-    // print_r(fetchAPIData('GetUnitOfMeasurements'));
-    // print_r(fetchAPIData('Master/GetKKISANApplications'));
-    // print_r(fetchAPIData('Master/GetItemCategory?ApplicationID=FL'));
-    // print_r(fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL'));
-    // print_r(fetchAPIData('Master/GetItemDetail?ApplicationID=FL'));
-    // echo '</pre>'; 
     return view('products.create',compact('guoms','applications','categories','subcategories','item'));
   }
 
@@ -84,30 +34,23 @@ class ProductController extends Controller {
     $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
     $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
     $searchCategoryName = $request->category;
-      $itemCategoryId = null;
-      foreach ($categories as $item) {
-          if ($item->ItemCategoryName == $searchCategoryName) {
-              $itemCategoryId = $item->ItemCategoryID;
-              break;
-          }
+    $itemCategoryId = null;
+    foreach ($categories as $item) {
+      if ($item->ItemCategoryName == $searchCategoryName) {
+        $itemCategoryId = $item->ItemCategoryID;
+        break;
       }
-      $searchSubCategoryName = $request->sub_category;
-      $subCategoryId = null;
-      foreach ($subcategories as $item) {
-          if ($item->SubCategoryName == $searchSubCategoryName) {
-              $subCategoryId = $item->SubCategoryID;
-              break;
-          }
+    }
+    $searchSubCategoryName = $request->sub_category;
+    $subCategoryId = null;
+    foreach ($subcategories as $item) {
+      if ($item->SubCategoryName == $searchSubCategoryName) {
+        $subCategoryId = $item->SubCategoryID;
+        break;
       }
-      $productcode = rand(10000000000000, 99999999999999);
-      // if ($itemCategoryId !== null) {
-      //     echo "ItemCategoryID: " . $itemCategoryId;
-      // } else {
-      //     echo "SubCategory not found.";
-      // }
-      // dd($request->all());
+    }
+    $productcode = rand(10000000000000, 99999999999999);
     $validator = Validator::make($request->all(),[
-
       'secondary' => ['required'],
       'applicationid' => ['required'],
       'company_name' => ['required'],
@@ -119,7 +62,6 @@ class ProductController extends Controller {
       'brand_name' => ['required'],
       'weight' => ['required'],
       'uomid' => ['required'],
-
     ]);
     if ( $validator->passes() ) {
       $products = new Product();
@@ -154,7 +96,6 @@ class ProductController extends Controller {
   public function update($id, Request $request) {
     $products = Product::find($id);
     $validator = Validator::make($request->all(),[
-
       'secondary' => ['string', 'max:255'],
       'applicationid' => ['string', 'max:255'],
       'product_code' => ['string', 'max:255'],
@@ -167,9 +108,8 @@ class ProductController extends Controller {
       'brand_name' => ['string', 'max:255'],
       'weight' => ['string', 'max:255'],
       'uomid' => ['string', 'max:255'],
-
     ]);
-    if( $validator->passes() ) {
+    if ($validator->passes()) {
       $products = Product::find($id);
       $products->secondary = $request->secondary;
       $products->applicationid = $request->applicationid;
@@ -199,18 +139,16 @@ class ProductController extends Controller {
     return redirect()->back();
   }
 
-  // public function deletetype(Request $request){
-  //   $ids = $request->ids;
-  //   Type::whereIn('id', $ids)->delete();
-  //   Alert::success('Success', 'Bus Type Deleted Successfully');
-  //   return redirect()->back();
-  // }
-
   public function deleteproduct(Request $request){
     $ids = $request->ids;
     $product = Product::whereIn('id', $ids)->get();
     Product::whereIn('id', $ids)->delete();
     Alert::success('Success', 'Product Deleted Successfully');
     return redirect()->back();
+  }
+
+  public function view($id) { 
+    $product = Product::find($id); 
+    return view('products.view',['product'=>$product]);  
   }
 }

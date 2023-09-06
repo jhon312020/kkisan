@@ -5,13 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\Vote;
-use App\Models\Voter;
-use App\Models\Candidate;
-use App\Models\Position;
-use App\Models\About;
-use App\Models\Contact;
-use App\Models\Enquiry;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Auth;
@@ -31,35 +24,22 @@ use App\Charts\CandidateVotesChart;
 class AdminController extends Controller {
   public function index(Request $request) {
     $users = User::where('id','!=',Auth()->id())
-                  ->where('id','!=',1)
-                  ->paginate(10);
-
+              ->where('id','!=',1)
+              ->paginate(10);
     $data = compact('users');
     return view('/adminHome')->with($data);
   }
-  // public function index() {
-  //    if (request('search')) {
-  //       $users = User::where('name', 'like', '%' . request('search') . '%')->get();
-  //   } else {
-  //       $users = User::where('id', '!=', Auth::id())->paginate(10);
-  //   }
-  //   // $users = User::where('id', '!=', Auth::id())->paginate(10);
-  //   return view('/adminHome',['users' => $users]);
-  // }
-
   public function create() {
     return view('admin.create');
   }
 
   public function store(Request $request) {
     $validator = Validator::make($request->all(),[
-
       'name' => ['required', 'string', 'max:255'],
       'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
       'password' => ['required', 'string', 'min:8', 'confirmed'],
-
     ]);
-    if ( $validator->passes() ) {
+    if ($validator->passes()) {
       $user = new User();
       $user->name = $request->name;
       $user->email = $request->email;
@@ -83,7 +63,6 @@ class AdminController extends Controller {
   public function update($id, Request $request) {
     $user = User::find($id);
     $validator = Validator::make($request->all(),[
-
       'name' => ['required', 'string', 'max:255'],
       'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
       'phone' => ['required', 'string', 'min:8'],
@@ -94,11 +73,8 @@ class AdminController extends Controller {
       'company_pincode' => ['nullable', 'string', 'max:255'],
       'address' => ['nullable', 'string', 'max:255'],
       'profile_pic' => ['nullable'],
-      // 'password' => ['required', 'string', 'min:8', 'confirmed'],
-
-
     ]);
-    if( $validator->passes() ) {
+    if ($validator->passes() ) {
       $user = User::find($id);
       $user->name = $request->name;
       $user->email = $request->email;
@@ -115,10 +91,9 @@ class AdminController extends Controller {
         $user->profile_pic->move('images',$image_new_name);
         $user->profile_pic= 'images/' . $image_new_name;
       }
-      // $user->password = Hash::make($request->password);
       $user->save();
       Alert::success('Success', 'User Successfully Updated');
-        return redirect()->route('users.edit',$id);
+      return redirect()->route('users.edit',$id);
     } else {
       Alert::error('Error', 'Some Error Occurred');
       return redirect()->route('users.edit',$id)->withErrors($validator)->withInput();
@@ -128,10 +103,8 @@ class AdminController extends Controller {
   public function passwordupdate($id, Request $request) {
     $user = User::find($id);
     $validator = Validator::make($request->all(),[
-
       'old_password' => ['required', 'string'],
       'password' => ['required', 'string', 'min:8', 'confirmed'],
-
     ]);
     if( $validator->passes() ) {
       $user = User::find($id);
@@ -158,65 +131,56 @@ class AdminController extends Controller {
     return redirect()->back();
   }
 
-  // public function deleteUsers(Request $request){
-  //   $ids = $request->ids;
-  //   User::whereIn('id', $ids)->delete();
-  //   Alert::success('Success', 'User Deleted Successfully');
-  //   return redirect()->back();
-  // }
-
   public function deleteUsers(Request $request){
     $ids = $request->ids;
-      if ( $ids != null ) {
+    if ( $ids != null ) {
       $user = User::whereIn('id', $ids)->get();
       User::whereIn('id', $ids)->delete();
       Alert::success('Success', 'User Deleted Successfully');
       return redirect()->back();
-      }
-       else {
-        Alert::error('Error', 'Please Select At Least One Record');
-        return redirect()->back();
-      }      
+    } else {
+      Alert::error('Error', 'Please Select At Least One Record');
+      return redirect()->back();
+    }      
   }
 
   public function givePermission(Request $request, User $user) {
-      if( $user->hasPermissionTo($request->permission)){
-        Alert::error('Error', 'Permission Exsit');
-        return redirect()->back();   
-      } 
-      $user->givePermissionTo($request->permission);
-       Alert::success('Success', 'Permission Assign This User Successfully');
-      return redirect()->back();
-    }
+    if ($user->hasPermissionTo($request->permission)) {
+      Alert::error('Error', 'Permission Exsit');
+      return redirect()->back();   
+    } 
+    $user->givePermissionTo($request->permission);
+    Alert::success('Success', 'Permission Assign This User Successfully');
+    return redirect()->back();
+  }
 
-    public function revokePermission(User $user, Permission $permission ) {
-      if( $user->hasPermissionTo($permission)){
-        $user->revokePermissionTo($permission);
-        Alert::success('Success', 'Permission Revoked This User Successfully');
-        return redirect()->back();   
-      } 
-       Alert::error('Error', 'Permission Not Exsit');
-      return redirect()->back();
-    }
+  public function revokePermission(User $user, Permission $permission ) {
+    if ($user->hasPermissionTo($permission)) {
+      $user->revokePermissionTo($permission);
+      Alert::success('Success', 'Permission Revoked This User Successfully');
+      return redirect()->back();   
+    } 
+    Alert::error('Error', 'Permission Not Exsit');
+    return redirect()->back();
+  }
 
-    public function assignRole(Request $request, User $user) {
-      if( $user->hasRole($request->role)){
-        Alert::error('Error', 'Role Exsit');
-        return redirect()->back();   
-      } 
-      $user->assignRole($request->role);
-       Alert::success('Success', 'Role Assign This User Successfully');
-      return redirect()->back();
-    }
+  public function assignRole(Request $request, User $user) {
+    if ($user->hasRole($request->role)) {
+      Alert::error('Error', 'Role Exsit');
+      return redirect()->back();   
+    } 
+    $user->assignRole($request->role);
+    Alert::success('Success', 'Role Assign This User Successfully');
+    return redirect()->back();
+  }
 
-    public function removeRole(User $user,Role $role ) {
-      if( $user->hasRole($role)){
-        $user->removeRole($role);
-        Alert::success('Success', 'Role Revoked This User Successfully');
-        return redirect()->back();   
-      } 
-       Alert::error('Error', 'Role Not Exsit');
-      return redirect()->back();
-    }
-  
+  public function removeRole(User $user,Role $role ) {
+    if ($user->hasRole($role)) {
+      $user->removeRole($role);
+      Alert::success('Success', 'Role Revoked This User Successfully');
+      return redirect()->back();   
+    } 
+    Alert::error('Error', 'Role Not Exsit');
+    return redirect()->back();
+  }
 }

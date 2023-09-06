@@ -12,7 +12,7 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="e-panel card">
-            <div class="card-header">{{ __('Add Product') }} <a href="{{ url('/productHome') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="fa-brands fa-product-hunt"></i>Product</a></div>
+            <div class="card-header">{{ __('Add Product') }} <a href="{{ url('/products') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="fa-brands fa-product-hunt"> </i>Product List</a></div>
             <div class="card-body">
               <form method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data">
                 @csrf      
