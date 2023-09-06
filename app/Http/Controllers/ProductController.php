@@ -49,16 +49,24 @@ class ProductController extends Controller {
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $contents = curl_exec($ch);
+    if ($contents === false) {
+      // echo 'Curl error: ' . curl_error($ch);
+    } else {
+      echo 'Operation completed without any errors';
+    }
+
     $data = json_decode($contents);
-    return $data; curl_close($ch);
+    curl_close($ch);
+    return $data;
   }
 
   public function create() {
     $guoms = $this->fetchAPIData('GetUnitOfMeasurements');
     $applications = $this->fetchAPIData('Master/GetKKISANApplications');
-    $categorries = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
-    $subcategorries = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
+    $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
+    $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
     $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
+    // exit;
     // echo '<pre>';
     // print_r(fetchAPIData('GetUnitOfMeasurements'));
     // print_r(fetchAPIData('Master/GetKKISANApplications'));
@@ -66,18 +74,18 @@ class ProductController extends Controller {
     // print_r(fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL'));
     // print_r(fetchAPIData('Master/GetItemDetail?ApplicationID=FL'));
     // echo '</pre>'; 
-    return view('products.create',compact('guoms','applications','categorries','subcategorries','item'));
+    return view('products.create',compact('guoms','applications','categories','subcategories','item'));
   }
 
   public function store(Request $request) {
     $guoms = $this->fetchAPIData('GetUnitOfMeasurements');
     $applications = $this->fetchAPIData('Master/GetKKISANApplications');
-    $categorries = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
-    $subcategorries = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
+    $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
+    $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
     $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
     $searchCategoryName = $request->category;
       $itemCategoryId = null;
-      foreach ($categorries as $item) {
+      foreach ($categories as $item) {
           if ($item->ItemCategoryName == $searchCategoryName) {
               $itemCategoryId = $item->ItemCategoryID;
               break;
@@ -85,7 +93,7 @@ class ProductController extends Controller {
       }
       $searchSubCategoryName = $request->sub_category;
       $subCategoryId = null;
-      foreach ($subcategorries as $item) {
+      foreach ($subcategories as $item) {
           if ($item->SubCategoryName == $searchSubCategoryName) {
               $subCategoryId = $item->SubCategoryID;
               break;

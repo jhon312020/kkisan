@@ -28,9 +28,11 @@
                     <div class="col-lg-6 form-group">
                       <label for=""> Application Id</label>
                       <select class="form-control" name="applicationid" id="applicationid">
+                        @if ($applications)
                         @foreach ($applications as $application)
                         <option value="{{ $application->ApplicationID }}">{{ $application->ApplicationName }}</option>
                         @endforeach
+                        @endif
                       </select>
                     </div>
                     <div class="col-lg-6 form-group">
@@ -56,17 +58,21 @@
                     <div class="col-lg-6 form-group">
                       <label for="">Category Name</label>
                       <select name="category" class="form-control" id="category">
-                        @foreach ($categorries as $category)
+                        @if ($categories)
+                        @foreach ($categories as $category)
                         <option value="{{ $category->ItemCategoryName }}">{{ $category->ItemCategoryName }}</option>
                         @endforeach
+                        @endif
                       </select>
                     </div>
                     <div class="col-lg-6 form-group">
                       <label for="sub_category">Choose Subcategory</label>
                       <select name="sub_category" id="sub_category" class="form-control">
-                        @foreach ($subcategorries as $subcategory)
+                        @if ($subcategories)
+                        @foreach ($subcategories as $subcategory)
                         <option value="{{ $subcategory->SubCategoryName }}">{{ $subcategory->SubCategoryName }}</option>
                         @endforeach
+                        @endif
                         <option value="other">other</option>
                       </select>
                       <input type="text" class="form-control" id="other-sub_category"
@@ -85,9 +91,11 @@
                     <div class="col-lg-6 form-group">
                       <label for=""> Unit of Measurement</label>
                       <select class="form-control" name="uomid" id="uomid">
+                        @if ($guoms)
                         @foreach ($guoms as $guom)
                         <option value="{{ $guom->UomID }}">{{ $guom->UomName }}</option>
                         @endforeach
+                        @endif
                       </select>
                     </div>
                   </div>
