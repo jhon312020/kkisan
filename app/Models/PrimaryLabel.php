@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PrimaryLabel extends Model {
     use HasFactory;
@@ -26,8 +27,15 @@ class PrimaryLabel extends Model {
       'qr_code',
       'status',
       'quantity',
+      'label_type',
       'mrp',
 
     ];
+
+    protected $with = ['LabelType'];
+
+    public function LabelType() {
+      return $this->belongsTo(LabelType::class, 'label_type', 'id');
+    }
 }
 

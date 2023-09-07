@@ -18,29 +18,15 @@
       <div class="card">
             <div class="card-header">{{ __('Primary List') }}  <a href="{{ route('primaries.create') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe39d;</i>Add Primary</a></div>
         <div class="card-body">
-          <!-- <form method="GET" class="col-6">
-            <div class="form-group">
-              <input type="search" name="search" value="" class="form-control" placeholder="Search by Position" aria-label="Search" aria-describedby="button-addon2">
-            </div>
-            <button class="btn btn-primary" type="submit" id="button-addon2"><i class="material-icons" style="font-size:15px">&#xe8b6;</i> Search</button>
-            <a href="{{ url('/primaryHome') }}">
-              <button class="btn btn-primary" type="button"><i class="material-icons" style="font-size:15px">&#xe86a;</i> Reset</button>
-            </a>
-          </form>
-          <br> -->
           <form id="target" action="/delete-primaries" method="POST">
             @csrf
             <table id="myTable" class="table table-striped">
               <tr>
-          <!--       <th>
-                  <div class="form-check form-switch">
-                    <input type="checkbox" id="selectAll">
-                  </div>
-                </th> -->
                 <th>Label Created Date</th>
                 <th>Product Name</th>
                 <th>Product Code</th>
                 <th>Product Weight</th>
+                <th>Lable Type</th>
                 <th>No. of Lables</th>
                 <th>Bathch Number</th>
                 <th>Manufacturing Date</th>
@@ -51,19 +37,15 @@
               @if ($primaries->isNotEmpty())
               @foreach ($primaries as $primary)
               <tr valign="middle">
-           <!--      <td>
-                  <div class="form-check form-switch">
-                    <input type="checkbox" class="dynamicCheckbox" name="ids[{{ $primary->id }}]" value="{{ $primary->id }}" id="{{ $primary->id }}">
-                  </div>
-                </td> -->
-                <td>{{ $primary->created_at}}</td>
+                <td>{{ \Carbon\Carbon::parse($primary->created_at)->format('d-M-Y h:i:sA') }}</td>
                 <td>{{ $primary->product_name}}</td>
                 <td>{{ $primary->product_code}}</td>
                 <td>{{ $primary->weight}}</td>
+                <td>{{ $primary->LabelType->name}}</td>
                 <td>{{ $primary->quantity}}</td>
                 <td>{{ $primary->batch_number}}</td>
-                <td>{{ $primary->manufacture_date}}</td>
-                <td>{{ $primary->expiry_date}}</td>
+                <td>{{ \Carbon\Carbon::parse($primary->manufacture_date)->format('d-M-Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($primary->expiry_date)->format('d-M-Y') }}</td>
                 <td>{{ $primary->mrp}}</td>
                 <td>
                   <a href="{{ route('primaries.view', $primary->id) }}" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe254;</i>View</a>
@@ -85,50 +67,4 @@
     </div>
   </div>
 </div>
-<script>
-  $(document).ready(function() {
-    $('#selectAll').click(function() {
-      $('.dynamicCheckbox').prop('checked', $(this).prop('checked'));
-    });
-    $('.dynamicCheckbox').click(function() {
-      if ($('.dynamicCheckbox:checked').length === $('.dynamicCheckbox').length) {
-        $('#selectAll').prop('checked', true);
-      } else {
-        $('#selectAll').prop('checked', false);
-      }
-    });
-  });
-
-  function deleteprimaries() {
-    event.preventDefault();
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger'
-      },
-      buttonsStyling: false
-    })
-
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You want to delete this!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, cancel!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        $("#target").submit();
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        swalWithBootstrapButtons.fire(
-          'Cancelled',
-          'Primary is safe :)',
-          'error'
-        )
-      }
-    })
-  }
-</script>
 @endsection

@@ -45,7 +45,7 @@
                 <td>{{ $product->company_name}}</td>
                 <td>{{ $product->product_name}}</td>
                 <td>{{ $product->secondary}}</td>
-                <td>{{ $product->created_at}}</td>
+                <td>{{ \Carbon\Carbon::parse($product->created_at)->format('d-M-Y h:i:sA') }}</td>
                 <td>{{ $product->product_code}}</td>
                 <td>{{ $product->manufacturer_name}}</td>
                 <td>{{ $product->supplier_name}}</td>
@@ -53,7 +53,7 @@
                 <td>{{ $product->sub_category_name}}</td>
                 <td>{{ $product->brand_name}}</td>
                 <td>{{ $product->weight}}</td>
-                <td>{{ $product->uomid}}</td>
+                <td>{{ $product->uom_name}}</td>
                 <td>
                   <a href="{{ route('products.view', $product->id) }}" class="btn btn-primary btn-sm">View</a>
                 </td>

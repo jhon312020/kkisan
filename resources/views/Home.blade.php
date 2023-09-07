@@ -26,7 +26,7 @@
                   <div class="card">
                     <div class="card-body iconfont text-left Dash-card2" style="background: #1746A2; color:white">
                       <h6 class="mb-3 Dash-color2">Total Labels </h6>
-                      <h4 class="mb-1 Dash-color2 text-dark"> 0 </h4>
+                      <h4 class="mb-1 Dash-color2 text-dark">{{ $totalCount }}</h4>
                       <p class="mb-2 text-muted"> </p>
                     </div>
                   </div>
@@ -35,7 +35,7 @@
                   <div class="card">
                     <div class="card-body iconfont text-left Dash-card3 " style="background: rgb(30, 213, 30);color:white">
                       <h6 class="mb-3 Dash-color3">Total Green Label</h6>
-                      <h4 class="mb-1 Dash-color3 text-dark"> 0 </h4>
+                      <h4 class="mb-1 Dash-color3 text-dark">{{ $green }}</h4>
                       <p class="mb-2 text-muted"> </p>
                     </div>
                   </div>
@@ -44,7 +44,7 @@
                   <div class="card">
                     <div class="card-body iconfont text-left Dash-card4">
                       <h6 class="mb-3 Dash-color4"> Total White Big Label </h6>
-                      <h4 class="mb-1 Dash-color4  text-dark"> 0 </h4>
+                      <h4 class="mb-1 Dash-color4  text-dark">{{ $white }}</h4>
                       <p class="mb-2 text-muted"> </p>
                     </div>
                   </div>
@@ -53,7 +53,7 @@
                   <div class="card">
                     <div class="card-body iconfont text-left Dash-card4">
                       <h6 class="mb-3 Dash-color4"> Total White Medium Label </h6>
-                      <h4 class="mb-1 Dash-color4  text-dark"> 0 </h4>
+                      <h4 class="mb-1 Dash-color4  text-dark">{{ $medium }}</h4>
                       <p class="mb-2 text-muted"> </p>
                     </div>
                   </div>
@@ -62,7 +62,7 @@
                   <div class="card">
                     <div class="card-body iconfont text-left" style="background: #943785; color:#fff">
                       <h6 class="mb-3 Dash-color4" style="font-weight: bold;"> Total Small Label </h6>
-                      <h4 class="mb-1" style="color: white; font-weight: bold;"> 0 </h4>
+                      <h4 class="mb-1" style="color: white; font-weight: bold;">{{ $small }}</h4>
                       <p class="mb-2 text-muted"> </p>
                     </div>
                   </div>

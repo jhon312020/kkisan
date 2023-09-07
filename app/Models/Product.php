@@ -23,6 +23,7 @@ class Product extends Model {
     'product_name',
     'brand_name',
     'uom_id',
+    'uom_name',
     'weight',
     'company_name',
     'status',

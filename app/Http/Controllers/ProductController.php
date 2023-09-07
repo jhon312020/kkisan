@@ -1,9 +1,13 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Product;
+use App\Models\UnitOfMeasurement;
+use App\Models\Application;
+use App\Models\Category;
+use App\Models\SubCategory;
+use App\Models\Item;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Models\products;
 use Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -19,44 +23,25 @@ class ProductController extends Controller {
   }
 
   public function create() {
-    $guoms = $this->fetchAPIData('GetUnitOfMeasurements');
-    $applications = $this->fetchAPIData('Master/GetKKISANApplications');
-    $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
-    $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
-    $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
-    return view('products.create',compact('guoms','applications','categories','subcategories','item'));
+    $guoms = UnitOfMeasurement::where('local_status',1)->get();
+    $applications = Application::where('local_status',1)->get();
+    $categories = Category::where('local_status',1)->get();
+    $subcategories = SubCategory::where('local_status',1)->get();
+    $items = Item::where('local_status',1)->get();
+    return view('products.create',compact('guoms','applications','categories','subcategories','items'));
   }
 
   public function store(Request $request) {
-    $guoms = $this->fetchAPIData('GetUnitOfMeasurements');
-    $applications = $this->fetchAPIData('Master/GetKKISANApplications');
-    $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
-    $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
-    $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
-    $searchCategoryName = $request->category;
-    $itemCategoryId = null;
-    foreach ($categories as $item) {
-      if ($item->ItemCategoryName == $searchCategoryName) {
-        $itemCategoryId = $item->ItemCategoryID;
-        break;
-      }
-    }
-    $searchSubCategoryName = $request->sub_category;
-    $subCategoryId = null;
-    foreach ($subcategories as $item) {
-      if ($item->SubCategoryName == $searchSubCategoryName) {
-        $subCategoryId = $item->SubCategoryID;
-        break;
-      }
-    }
-    $searchguomsName = $request->uomid;
-    $uomsName = null;
-    foreach ($guoms as $item) {
-      if ($item->UomID == $searchguomsName) {
-        $uomsName = $item->UomName;
-        break;
-      }
-    }
+    $guoms = UnitOfMeasurement::where('UomID',$request->uomid)->first();
+    $applications = Application::where('ApplicationID',$request->applicationid)->first();
+    $categories = Category::where('ItemCategoryName',$request->category)->first();
+    $subcategories = SubCategory::where('SubCategoryName',$request->sub_category)->first();
+    $items = Item::where('ApplicationID',$applications->ApplicationID)
+                  ->orWhere('ItemCategoryID',$categories->ItemCategoryID)
+                  ->orWhere('SubCategoryID',$subcategories->SubCategoryID)
+                  ->orWhere('UomID',$guoms->UomID)
+                  ->first();
+    
     $productcode = rand(10000000000000, 99999999999999);
     $validator = Validator::make($request->all(),[
       'secondary' => ['required'],
@@ -75,18 +60,24 @@ class ProductController extends Controller {
       $products = new Product();
       $products->secondary = $request->secondary;
       $products->application_id = $request->applicationid;
+      $products->application_name = $applications->ApplicationName;
       $products->product_code = $productcode;
       $products->company_name = $request->company_name;
+      $products->marketed_by = $request->company_name;
       $products->manufacturer_name = $request->manufacturer_name;
       $products->product_name = $request->product_name;
       $products->supplier_name = $request->supplier_name;
-      $products->category_id = $itemCategoryId;
+      $products->category_id = $categories->ItemCategoryID;
       $products->category_name = $request->category;
-      $products->sub_category_id = $subCategoryId;
+      $products->sub_category_id = $subcategories->SubCategoryID;
       $products->sub_category_name = $request->sub_category;
       $products->brand_name = $request->brand_name;
       $products->weight = $request->weight;
       $products->uom_id = $request->uomid;
+      $products->uom_name = $guoms->UomName;
+      $products->item_id = $items->ItemID;
+      $products->item_name = $items->ItemName;
+      $products->packet_size = $items->PacketSize;
       $products->save();
       Alert::success('Congrats', 'Product Successfully Added');
       return redirect()->back();

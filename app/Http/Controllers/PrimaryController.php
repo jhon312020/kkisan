@@ -4,6 +4,7 @@ use App\Models\PrimaryLabel;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\LabelType;
 use Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -20,13 +21,9 @@ class PrimaryController extends Controller {
   }
 
   public function create() {
-    $guoms = $this->fetchAPIData('GetUnitOfMeasurements');
-    $applications = $this->fetchAPIData('Master/GetKKISANApplications');
-    $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
-    $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
-    $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
-    $products = Product::paginate(10);
-    return view('primaries.create',compact('guoms','applications','categories','subcategories','item','products'));
+    $products = Product::where('status', 1)->get();
+    $types = LabelType::where('status', 1)->get();
+    return view('primaries.create',compact('products','types'));
   }
 
   public function getRelatedData(Request $request) {
@@ -36,29 +33,9 @@ class PrimaryController extends Controller {
   }
 
   public function store(Request $request) {
-    $guoms = $this->fetchAPIData('GetUnitOfMeasurements');
-    $applications = $this->fetchAPIData('Master/GetKKISANApplications');
-    $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
-    $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
-    $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
     $product = Product::where('product_code',$request->product_id)->first();
     $productName = $product->product_name;
     $searchCategoryName = $request->category;
-    $itemCategoryId = null;
-    foreach ($categories as $item) {
-      if ($item->ItemCategoryName == $searchCategoryName) {
-        $itemCategoryId = $item->ItemCategoryID;
-        break;
-      }
-    }
-    $searchSubCategoryName = $request->sub_category;
-    $subCategoryId = null;
-    foreach ($subcategories as $item) {
-      if ($item->SubCategoryName == $searchSubCategoryName) {
-        $subCategoryId = $item->SubCategoryID;
-        break;
-      }
-    }
     $qrcode = rand(1000000000, 9999999999);
     $validator = Validator::make($request->all(),[
       'product_id' => ['required'],
@@ -92,6 +69,7 @@ class PrimaryController extends Controller {
       $primaries->expiry_date = $request->exp_date;
       $primaries->quantity = $request->quantity;
       $primaries->mrp = $request->mrp;
+      $primaries->label_type = $request->type;
       $primaries->qr_code = $qrcode;
       $primaries->save();
       Alert::success('Congrats', 'Primary Successfully Added');

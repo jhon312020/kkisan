@@ -62,7 +62,7 @@
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Unit Of Measurement</td>
-                          <td>{{$product->uom_id}}</td>
+                          <td>{{$product->uom_name}}</td>
                         </tr>
                       </tbody>
                     </table>

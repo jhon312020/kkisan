@@ -78,12 +78,10 @@
                           <label for="exampleInputEmail1">Choose Type of Label</label>
                           <select name="type" class="form-control">
                               <option>Choose Type of Label:</option>
-                              <option value="green">Green Label</option>
-                              <option value="white">White Label Big</option>
-                              <option value="medium">White Label Medium</option>
-                              <option value="small">Small Label</option>
+                              @foreach ($types as $type)
+                                <option value="{{ $type->id }}">{{ $type->display_name }}</option>
+                              @endforeach
                           </select>
-
                       </div>
 
                       <div class="col-lg-4 form-group">

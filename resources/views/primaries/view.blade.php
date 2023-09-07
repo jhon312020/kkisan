@@ -60,6 +60,24 @@
                     <h4 class="text-center">{{$primary->mrp}}</h4>
                   </div>
                   <div class="col-sm-3">
+                      <h4 class="text-center">(Min.) 98%</h4>
+                  </div>
+                  <div class="col-sm-3">
+                      <h4 class="text-center">(Max.)2.0%</h4>
+                  </div>
+                  <div class="col-sm-3">
+                      <h4 class="text-center">(Max.)10/Kg</h4>
+                  </div>
+                  <div class="col-sm-3">
+                      <h4 class="text-center">(Max.)10/Kg</h4>
+                  </div>
+                  <div class="col-sm-3">
+                      <h4 class="text-center">(Min.)80%</h4>
+                  </div>
+                  <div class="col-sm-3">
+                      <h4 class="text-center">(Min.)10%</h4>
+                  </div>
+                  <div class="col-sm-3">
                     <h4 class="text-center">
                       <img src="no" width="50px" alt="">
                     </h4>
