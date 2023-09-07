@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
@@ -17,9 +15,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Pagination\Paginator;
-use LaravelDaily\LaravelCharts\Classes\LaravelChart;
-use ConsoleTVs\Charts\Classes\Chartjs\Chart;
-use App\Charts\CandidateVotesChart;
 
 class AdminController extends Controller {
   public function index(Request $request) {

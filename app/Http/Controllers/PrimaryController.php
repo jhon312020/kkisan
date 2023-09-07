@@ -162,6 +162,11 @@ class PrimaryController extends Controller {
   }
 
   public function view($id) { 
-    $primary = PrimaryLabel::find($id); return view('primaries.view',['primary'=>$primary]);  
+    $primary = PrimaryLabel::find($id); 
+    return view('primaries.view',['primary'=>$primary]);  
   }  
+  public function printLabel($id) { 
+    $primary = PrimaryLabel::find($id); 
+    return view('primaries.printLabel',['primary'=>$primary]);  
+  }
 }
