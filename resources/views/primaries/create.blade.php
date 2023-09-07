@@ -12,7 +12,7 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="e-panel card">
-            <div class="card-header">{{ __('Add primary') }} <a href="{{ url('/primary') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="fa-brands fa-primaries-hunt"></i>Primary List</a></div>
+            <div class="card-header">{{ __('Add primary') }} <a href="{{ url('/primaries') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="fa-brands fa-primaries-hunt"></i>Primary List</a></div>
             <div class="card-body">
               <form method="POST" action="{{ route('primaries.store') }}" enctype="multipart/form-data">
                 @csrf      

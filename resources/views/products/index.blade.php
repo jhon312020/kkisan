@@ -20,7 +20,8 @@
         <div class="card-body">
           <form id="target" action="/delete-products" method="POST">
             @csrf
-            <table id="myTable" class="table table-striped table-responsive">
+            <table id="myTable" class="table table-striped table-responsive" style="width:100%"> 
+              <thead>
               <tr>
                 <th>Company Name</th>
                 <th>Product Name</th>
@@ -36,8 +37,10 @@
                 <th>Unit of Measurement</th>
                 <th>Action</th>
               </tr>
+              </thead>
               @if ($products->isNotEmpty())
               @foreach ($products as $product)
+              </tbody>
               <tr valign="middle">
                 <td>{{ $product->company_name}}</td>
                 <td>{{ $product->product_name}}</td>
@@ -46,8 +49,8 @@
                 <td>{{ $product->product_code}}</td>
                 <td>{{ $product->manufacturer_name}}</td>
                 <td>{{ $product->supplier_name}}</td>
-                <td>{{ $product->category}}</td>
-                <td>{{ $product->sub_category}}</td>
+                <td>{{ $product->category_name}}</td>
+                <td>{{ $product->sub_category_name}}</td>
                 <td>{{ $product->brand_name}}</td>
                 <td>{{ $product->weight}}</td>
                 <td>{{ $product->uomid}}</td>
@@ -61,6 +64,7 @@
                 <td colspan="6">Record Not Found</td>
               </tr>
               @endif
+              </tbody>
             </table>
           </form>
           <div class="mt-3">
@@ -73,6 +77,27 @@
 </div>
 <script>
   $(document).ready(function() {
+    // $('#myTable').DataTable( {
+    //   responsive: true,
+    //   fixedHeader: true,
+    //    dom: 'Bfrtip',
+    //     columnDefs: [
+    //         {
+    //             targets: 1,
+    //             className: 'noVis'
+    //         }
+    //     ],
+    //     buttons: [
+    //         {
+    //             extend: 'colvis',
+    //             columns: ':not(.noVis)'
+    //         },
+            
+    //           'copy', 'excel', 'pdf'
+            
+    //     ]
+    
+    // });
     $('#selectAll').click(function() {
       $('.dynamicCheckbox').prop('checked', $(this).prop('checked'));
     });
@@ -116,10 +141,5 @@
       }
     })
   }
-  $(document).ready( function () {
-    $('#myTable').DataTable({
-      // DataTables options and configurations go here
-    });
-  });
 </script>
 @endsection

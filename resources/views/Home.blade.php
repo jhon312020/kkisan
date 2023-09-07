@@ -11,7 +11,7 @@
                 {{ session('status') }}
               </div>
             @endif
-            <div class="container">
+            <div class="m-5">
               <div class="row">
                 <div class="col-sm-6 col-lg-6 col-xl-3">
                   <div class="card">
@@ -53,7 +53,7 @@
                   <div class="card">
                     <div class="card-body iconfont text-left Dash-card4">
                       <h6 class="mb-3 Dash-color4"> Total White Medium Label </h6>
-                      <h4 class="mb-1 Dash-color4  text-dark"> 2 </h4>
+                      <h4 class="mb-1 Dash-color4  text-dark"> 0 </h4>
                       <p class="mb-2 text-muted"> </p>
                     </div>
                   </div>
@@ -62,7 +62,7 @@
                   <div class="card">
                     <div class="card-body iconfont text-left" style="background: #943785; color:#fff">
                       <h6 class="mb-3 Dash-color4" style="font-weight: bold;"> Total Small Label </h6>
-                      <h4 class="mb-1" style="color: white; font-weight: bold;"> 10 </h4>
+                      <h4 class="mb-1" style="color: white; font-weight: bold;"> 0 </h4>
                       <p class="mb-2 text-muted"> </p>
                     </div>
                   </div>

@@ -18,6 +18,7 @@
                 <div class="col-md-12">
                   <div class="Content-header1 col-lg-12">
                     <h3 class="mb-0 m-t-5 m-b-5 text-center">
+                      {{$primary->product_name}}
                     </h3>
                   </div>
                 </div>

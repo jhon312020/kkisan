@@ -41,6 +41,8 @@ class PrimaryController extends Controller {
     $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
     $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
     $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
+    $product = Product::where('product_code',$request->product_id)->first();
+    $productName = $product->product_name;
     $searchCategoryName = $request->category;
     $itemCategoryId = null;
     foreach ($categories as $item) {
@@ -80,11 +82,10 @@ class PrimaryController extends Controller {
       $primaries->supplier_name = $request->supplier_name;
       $primaries->category_name = $request->category_name;
       $primaries->sub_category_name = $request->sub_category_name;
-      $primaries->product_name = $request->primary_name;
+      $primaries->product_name = $productName;
       $primaries->brand_name = $request->brand_name;
       $primaries->uom_id = $request->uom_id;
       $primaries->weight = $request->weight;
-      
       $primaries->batch_number = $request->batch_no;
       $primaries->serial_number = $request->sub_category;
       $primaries->manufacture_date = $request->mfg_date;

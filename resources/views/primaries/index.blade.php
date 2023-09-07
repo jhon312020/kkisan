@@ -130,10 +130,5 @@
       }
     })
   }
-  $(document).ready( function () {
-        $('#myTable').DataTable({
-            // DataTables options and configurations go here
-        });
-    });
 </script>
 @endsection

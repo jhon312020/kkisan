@@ -73,10 +73,7 @@
                         <option value="{{ $subcategory->SubCategoryName }}">{{ $subcategory->SubCategoryName }}</option>
                         @endforeach
                         @endif
-                        <option value="other">other</option>
                       </select>
-                      <input type="text" class="form-control" id="other-sub_category"
-                      placeholder="Enter Subcategory" name="custom_sub_category" value="other">
                     </div>
                     <div class="col-lg-6 form-group">
                       <label for="">Brand Name</label>
@@ -111,20 +108,4 @@
 
   </div>
 </div>
-<script>
-$(document).ready(function () {
-        $("#other-sub_category").hide();
-
-        $("#sub_category").change(function () {
-            if ($(this).val() === "other") {
-                $("#other-sub_category").show();
-                $("#other-sub_category").attr("name", "other_sub_category");
-                $("#other-sub_category").val("test");
-            } else {
-                $("#other-sub_category").hide();
-                $("#other-sub_category").attr("name", "sub_category");
-            }
-        });
-    });
-</script>
 @endsection

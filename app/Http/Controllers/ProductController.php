@@ -49,6 +49,14 @@ class ProductController extends Controller {
         break;
       }
     }
+    $searchguomsName = $request->uomid;
+    $uomsName = null;
+    foreach ($guoms as $item) {
+      if ($item->UomID == $searchguomsName) {
+        $uomsName = $item->UomName;
+        break;
+      }
+    }
     $productcode = rand(10000000000000, 99999999999999);
     $validator = Validator::make($request->all(),[
       'secondary' => ['required'],

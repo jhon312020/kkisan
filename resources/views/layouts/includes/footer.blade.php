@@ -1,9 +1,7 @@
     <footer class="main-footer" style="background-color: rgb(0, 0, 0); bottom: 0; position: revert;
       color: whitesmoke; position: fixed;width: 100%;height: auto; ">
-      {{-- <strong>{{ $setting->footer_copyright}}</strong> --}}
+      <strong>MMC@2023</strong>
     </footer>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -20,13 +18,9 @@
     <!-- Include Tempus Dominus JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.0.1/sweetalert.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
 
