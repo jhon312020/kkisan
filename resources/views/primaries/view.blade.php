@@ -11,10 +11,12 @@
     <br>
     <div class="row">
       <div class="col-12"> 
+
         <div class="card" id="printMe">
+          <div class="card-header"><a href="#" style="float:right; 10px;" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe39d;</i> Print Label</a></div>
           <div class=" mb-0">
-            <div class="card-body pt-0">
-              <div class="row" style="border-top:2px solid black">
+            <div class="card-body">
+              <div class="row">
                 <div class="col-md-12">
                   <div class="Content-header1 col-lg-12">
                     <h3 class="mb-0 m-t-5 m-b-5 text-center">

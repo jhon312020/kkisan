@@ -51,6 +51,7 @@ Route::post('/delete-primaries', [PrimaryController::class, 'deleteprimary'])->n
 
 Route::resource('primaries',PrimaryController::class);
 Route::get('/primaries/view/{id}', [PrimaryController::class, 'view'])->name('primaries.view');
+Route::get('/primaries/printLabel/{id}', [PrimaryController::class, 'printLabel'])->name('primaries.printLabel');
 
 Route::get('/adminindex', [HomeController::class, 'count'])->name('count');
 

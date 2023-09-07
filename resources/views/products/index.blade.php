@@ -38,14 +38,14 @@
                 <th>Action</th>
               </tr>
               </thead>
+              <tbody>
               @if ($products->isNotEmpty())
               @foreach ($products as $product)
-              </tbody>
               <tr valign="middle">
                 <td>{{ $product->company_name}}</td>
                 <td>{{ $product->product_name}}</td>
                 <td>{{ $product->secondary}}</td>
-                <td>{{ \Carbon\Carbon::parse($product->created_at)->format('d-M-Y h:i:sA') }}</td>
+                <td>{{ date('d-M-Y h:i:s a', strtotime($product->created_at))}}</td>
                 <td>{{ $product->product_code}}</td>
                 <td>{{ $product->manufacturer_name}}</td>
                 <td>{{ $product->supplier_name}}</td>
@@ -61,7 +61,7 @@
               @endforeach
               @else
               <tr>
-                <td colspan="6">Record Not Found</td>
+                <td colspan="12">Record Not Found</td>
               </tr>
               @endif
               </tbody>

@@ -21,31 +21,33 @@
           <form id="target" action="/delete-primaries" method="POST">
             @csrf
             <table id="myTable" class="table table-striped">
-              <tr>
-                <th>Label Created Date</th>
-                <th>Product Name</th>
-                <th>Product Code</th>
-                <th>Product Weight</th>
-                <th>Lable Type</th>
-                <th>No. of Lables</th>
-                <th>Bathch Number</th>
-                <th>Manufacturing Date</th>
-                <th>Expiry Date</th>
-                <th>MRP</th>
-                <th>Action</th>
-              </tr>
+              <thead>
+                <tr>
+                  <th>Label Created Date</th>
+                  <th>Product Name</th>
+                  <th>Product Code</th>
+                  <th>Product Weight</th>
+                  <th>No. of Lables</th>
+                  <th>Bathch Number</th>
+                  <th>Manufacturing Date</th>
+                  <th>Expiry Date</th>
+                  <th>MRP</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
               @if ($primaries->isNotEmpty())
               @foreach ($primaries as $primary)
               <tr valign="middle">
-                <td>{{ \Carbon\Carbon::parse($primary->created_at)->format('d-M-Y h:i:sA') }}</td>
+                <td>{{ date('d-M-Y h:i:s a', strtotime($primary->created_at))}}</td>
                 <td>{{ $primary->product_name}}</td>
                 <td>{{ $primary->product_code}}</td>
                 <td>{{ $primary->weight}}</td>
                 <td>{{ $primary->LabelType->name}}</td>
                 <td>{{ $primary->quantity}}</td>
                 <td>{{ $primary->batch_number}}</td>
-                <td>{{ \Carbon\Carbon::parse($primary->manufacture_date)->format('d-M-Y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($primary->expiry_date)->format('d-M-Y') }}</td>
+                <td>{{ date('d-M-Y', strtotime($primary->manufacture_date))}}</td>
+                <td>{{ date('d-M-Y', strtotime($primary->expiry_date))}}</td>
                 <td>{{ $primary->mrp}}</td>
                 <td>
                   <a href="{{ route('primaries.view', $primary->id) }}" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe254;</i>View</a>
@@ -57,6 +59,7 @@
                 <td colspan="6">Record Not Found</td>
               </tr>
               @endif
+            </tbody>
             </table>
           </form>
           <div class="mt-3">

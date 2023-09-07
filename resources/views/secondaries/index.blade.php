@@ -18,32 +18,36 @@
       <div class="card">
         <div class="card-header">{{ __('Secondary List') }}  <a href="{{ route('secondaries.create') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe39d;</i>Add Secondary</a></div>
         <div class="card-body">
-          <table id="myTable" class="table table-striped table-responsive">
-            <tr>
-              <th>S.NO.</th>
-              <th>Secondary ID</th>
-              <th>Secondary QR Code</th>
-              <th>Primary QR Code</th>
-              <th>Product Code</th>
-              <th>Product Name</th>
-              <th>Supplier Name & Batch Number</th>
-              <th>Label Type</th>
-              <th>Action</th>
-            </tr>
-            @if ($secondaries->isNotEmpty())
-            @foreach ($secondaries as $secondary)
-            <tr valign="middle">
-              <td>{{ $secondary->company_name}}</td>
-              <td>
-                <a href="{{ route('secondaries.view', $secondary->id) }}" class="btn btn-primary btn-sm">View</a>
-              </td>
-            </tr>
-            @endforeach
-            @else
-            <tr>
-              <td colspan="9">Record Not Found</td>
-            </tr>
-            @endif
+          <table id="myTable" class="table table-striped table-fixed">
+            <thead>
+              <tr>
+                <th>S.NO.</th>
+                <th>Secondary ID</th>
+                <th>Secondary QR Code</th>
+                <th>Primary QR Code</th>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th>Supplier Name & Batch Number</th>
+                <th>Label Type</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if ($secondaries->isNotEmpty())
+              @foreach ($secondaries as $secondary)
+              <tr valign="middle">
+                <td>{{ $secondary->company_name}}</td>
+                <td>
+                  <a href="{{ route('secondaries.view', $secondary->id) }}" class="btn btn-primary btn-sm">View</a>
+                </td>
+              </tr>
+              @endforeach
+              @else
+              <tr>
+                <td colspan="9" >Record Not Found</td>
+              </tr>
+              @endif
+            </tbody>
           </table>
           <div class="mt-3">
             {{ $secondaries->links() }}
