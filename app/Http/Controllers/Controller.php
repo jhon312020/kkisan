@@ -17,7 +17,7 @@ class Controller extends BaseController {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $contents = curl_exec($ch);
     if ($contents === false) {
-      // echo 'Curl error: ' . curl_error($ch);
+      echo 'Curl error: ' . curl_error($ch);
     } 
     $data = json_decode($contents);
     curl_close($ch);

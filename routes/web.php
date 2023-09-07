@@ -88,9 +88,14 @@ Route::delete('/users/{user}/permissions/{permission}',[AdminController::class, 
 Route::get('/get-srelated-data',[SecondaryController::class, 'getSRelatedData']);
 Route::get('/secondaries/index',[SecondaryController::class, 'index'])->name('secondaries.index');
 Route::get('/secondaries/create',[SecondaryController::class, 'create'])->name('secondaries.create');
-//Added by MMC
+
+});
+
+//Added by MMC cron routes
 Route::get('/cron/getApplications', [CronController::class, 'getApplications'])->name('applications');
 Route::get('/cron/getUnitOfMeasurements', [CronController::class, 'getUnitOfMeasurements'])->name('getUnitOfMeasurements');
 Route::get('/cron/getCategories', [CronController::class, 'getCategories'])->name('getCategories');
+Route::get('/cron/getSubCategories', [CronController::class, 'getSubCategories'])->name('getSubCategories');
+Route::get('/cron/getItems', [CronController::class, 'getItems'])->name('getItems');
 
-});
+

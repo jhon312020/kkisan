@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use App\Models\Application;
 use App\Models\UnitOfMeasurement;
 use App\Models\Category;
+use App\Models\SubCategory;
+use App\Models\Item;
 use Carbon\Carbon;
 
 class CronController extends Controller {
@@ -21,9 +23,7 @@ class CronController extends Controller {
   }
 
   public function getUnitOfMeasurements() {
-    // $subcategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID=FL');
     // $item = $this->fetchAPIData('Master/GetItemDetail?ApplicationID=FL');
-    $newUoms = null;
     $uoms = $this->fetchAPIData('GetUnitOfMeasurements');
     if ($uoms) {
       $modelObj = new UnitOfMeasurement();
@@ -32,11 +32,36 @@ class CronController extends Controller {
   }
 
   public function getCategories() {
-    $newCategories = null;
-    $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID=FL');
-    if ($categories) {
-      $modelObj = new Category();
-      $this->recordInsert($modelObj, 'Category', $categories);
+    $applications = Application::where('local_status', 1)->pluck('ApplicationID');
+    foreach ($applications as $application) {
+      $categories = $this->fetchAPIData('Master/GetItemCategory?ApplicationID='.$application);
+      if ($categories && is_array($categories)) {
+        $modelObj = new Category();
+        $this->recordInsert($modelObj, 'Category', $categories);
+      }
+    }
+  }
+
+  public function getSubCategories() {
+    $applications = Application::where('local_status', 1)->pluck('ApplicationID');
+    foreach ($applications as $application) {
+      $subCategories = $this->fetchAPIData('Master/GetItemSubCategory?ApplicationID='.$application);
+      $this->pr($subCategories);
+      if ($subCategories && is_array($subCategories)) {
+        $modelObj = new SubCategory();
+        $this->recordInsert($modelObj, 'SubCategory', $subCategories);
+      }
+    }
+  }
+  public function getItems() {
+    $applications = Application::where('local_status', 1)->pluck('ApplicationID');
+    foreach ($applications as $application) {
+      $items = $this->fetchAPIData('Master/GetItemDetail?ApplicationID='.$application);
+      $this->pr($items);
+      if ($items && is_array($items)) {
+        $modelObj = new Item();
+        $this->recordInsert($modelObj, 'Item', $items);
+      }
     }
   }
 
@@ -52,6 +77,14 @@ class CronController extends Controller {
           $conditions = ['ItemCategoryID'=>$apiRecord->ItemCategoryID];
           $existingRecords[] = $apiRecord->ItemCategoryID;
         break; 
+        case 'SubCategory':
+          $conditions = ['ItemCategoryID'=>$apiRecord->ItemCategoryID, 'SubCategoryID'=>$apiRecord->SubCategoryID];
+          $existingRecords[] = $apiRecord->SubCategoryID;
+        break;
+        case 'Item':
+          $conditions = ['ItemCategoryID'=>$apiRecord->ItemCategoryID, 'SubCategoryID'=>$apiRecord->SubCategoryID, 'ItemID'=>$apiRecord->ItemID];
+          $existingRecords[] = $apiRecord->ItemID;
+        break;
         case 'UnitOfMeasurement':
           $conditions = ['UomID'=>$apiRecord->UomID];
           $existingRecords[] = $apiRecord->UomID;

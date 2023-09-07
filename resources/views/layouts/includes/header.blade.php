@@ -181,6 +181,7 @@
                         </li> -->
                         <li class="nav-item">
                           <a href="#" class="nav-link">
+                            <a href="{{ route('home.home') }}" class="nav-link <?php echo ($controllerName=="home")? "active":null ?>">
                             <i class="fa fa-home"></i>
                             <p>
                                Home
