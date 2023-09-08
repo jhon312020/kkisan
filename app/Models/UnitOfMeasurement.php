@@ -9,4 +9,8 @@ class UnitOfMeasurement extends Model {
     'name',
     'status',
   ];
+
+  public function PrimaryLabel() {
+    return $this->hasMany(PrimaryLabel::class);
+  }
 }

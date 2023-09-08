@@ -13,7 +13,7 @@
       <div class="col-12"> 
 
         <div class="card" id="printMe">
-          <div class="card-header"><a href="#" style="float:right; 10px;" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe39d;</i> Print Label</a></div>
+          <div class="card-header"><a href="{{ route('primaries.printLabel', $primary->id) }}" style="float:right; 10px;" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe39d;</i> Print Label</a></div>
           <div class=" mb-0">
             <div class="card-body">
               <div class="row">

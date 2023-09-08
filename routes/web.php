@@ -50,8 +50,12 @@ Route::get('/primaryHome', [PrimaryController::class, 'index'])->name('primaryHo
 Route::post('/delete-primaries', [PrimaryController::class, 'deleteprimary'])->name('deleteprimary');
 
 Route::resource('primaries',PrimaryController::class);
+
 Route::get('/primaries/view/{id}', [PrimaryController::class, 'view'])->name('primaries.view');
+
 Route::get('/primaries/printLabel/{id}', [PrimaryController::class, 'printLabel'])->name('primaries.printLabel');
+
+Route::post('/primaryprint/{id}', [PrimaryController::class, 'primaryprint'])->name('primaryprint');
 
 Route::get('/adminindex', [HomeController::class, 'count'])->name('count');
 

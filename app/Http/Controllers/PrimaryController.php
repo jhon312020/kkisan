@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\View;
+use PDF;
 
 class PrimaryController extends Controller {
 
@@ -32,11 +35,29 @@ class PrimaryController extends Controller {
     return response()->json($relatedData);
   }
 
+  public function generateNumber() {
+    $lastNumber = PrimaryLabel::max('qr_code');
+    if ($lastNumber && is_numeric($lastNumber) && $lastNumber >= 2300000001 && $lastNumber <= 2300999999) {
+      $nextNumber = $lastNumber + 1;
+    } else {
+      $nextNumber = 2300000001;
+    }
+    return $nextNumber;
+  }
+
   public function store(Request $request) {
     $product = Product::where('product_code',$request->product_id)->first();
     $productName = $product->product_name;
     $searchCategoryName = $request->category;
-    $qrcode = rand(1000000000, 9999999999);
+    $qrcodes = [];
+    if ($request->quantity) {
+      $quantity = $request->quantity;
+      
+      for ($i = 0; $i < $quantity; $i++) {
+          $qrcodes[] = [+$i => $this->generateNumber() + $i];
+      }
+      
+    }
     $validator = Validator::make($request->all(),[
       'product_id' => ['required'],
       'manufacturer_name' => ['required'],
@@ -70,7 +91,7 @@ class PrimaryController extends Controller {
       $primaries->quantity = $request->quantity;
       $primaries->mrp = $request->mrp;
       $primaries->label_type = $request->type;
-      $primaries->qr_code = $qrcode;
+      $primaries->qr_code = json_encode($qrcodes);
       $primaries->save();
       Alert::success('Congrats', 'Primary Successfully Added');
       return redirect()->back();
@@ -147,4 +168,39 @@ class PrimaryController extends Controller {
     $primary = PrimaryLabel::find($id); 
     return view('primaries.printLabel',['primary'=>$primary]);  
   }
+
+public function primaryprint($id) { 
+    $primary = PrimaryLabel::find($id);
+    
+    if ($primary->LabelType->name == 'small') {
+        $qrcodes = json_decode($primary->qr_code);
+        $qrCodesArray = [];
+        $counter = 0; // Initialize a counter variable
+
+        foreach ($qrcodes as $subArray) {
+            foreach ($subArray as $value) {
+                $qrCodeValue = "01" . str_pad($value, 10, '0', STR_PAD_LEFT);
+                $qrCode = QrCode::generate($qrCodeValue);
+                $qrCodesArray[] = [
+                    'qrCode' => $qrCode,
+                    'value' => $qrCodeValue,
+                ];
+
+                $fileName = "qrcode_$counter.png"; // Use the counter as the filename
+                $filePath = public_path("qrcodes/$fileName");
+                file_put_contents($filePath, $qrCode);
+
+                $counter++; // Increment the counter
+            }
+        }
+
+        // Load the PDF view and pass the QR codes array
+        $pdf = PDF::loadView('primaries.pdf', [
+            'qrCodesArray' => $qrCodesArray,
+            'primary' => $primary,
+        ]);
+
+        return $pdf->download('primaries.pdf');
+    }
+}
 }

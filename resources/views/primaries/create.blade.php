@@ -23,7 +23,7 @@
                         <select name="product_id" id="productid" class="form-control">
                           <option value="">Choose Product</option>
                           @foreach ($products as $product)
-                            <option value="{{ $product->product_code }}">{{ $product->product_name }}</option>
+                            <option value="{{ $product->product_code }}">{{ $product->product_name }}({{ date('d-M-Y h:i:s a', strtotime($product->created_at)) }})</option>
                           @endforeach
                         </select>
                     </div>

@@ -32,10 +32,14 @@ class PrimaryLabel extends Model {
 
     ];
 
-    protected $with = ['LabelType'];
+    protected $with = ['LabelType','UnitOfMeasurement'];
 
     public function LabelType() {
       return $this->belongsTo(LabelType::class, 'label_type', 'id');
+    }
+
+    public function UnitOfMeasurement() {
+      return $this->belongsTo(UnitOfMeasurement::class, 'uom_id', 'id');
     }
 }
 

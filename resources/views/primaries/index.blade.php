@@ -27,7 +27,8 @@
                   <th>Product Name</th>
                   <th>Product Code</th>
                   <th>Product Weight</th>
-                  <th>No. of Lables</th>
+                  <th>Label Type</th>
+                  <th>No. of Labels</th>
                   <th>Bathch Number</th>
                   <th>Manufacturing Date</th>
                   <th>Expiry Date</th>
@@ -42,7 +43,7 @@
                 <td>{{ date('d-M-Y h:i:s a', strtotime($primary->created_at))}}</td>
                 <td>{{ $primary->product_name}}</td>
                 <td>{{ $primary->product_code}}</td>
-                <td>{{ $primary->weight}}</td>
+                <td>{{ $primary->weight}} {{ $primary->UnitOfMeasurement->UomName}}</td>
                 <td>{{ $primary->LabelType->name}}</td>
                 <td>{{ $primary->quantity}}</td>
                 <td>{{ $primary->batch_number}}</td>
