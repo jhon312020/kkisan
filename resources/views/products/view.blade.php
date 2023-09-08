@@ -29,40 +29,40 @@
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Product Code </td>
-                          <td>{{$product->product_code}}</td>
+                          <td>{{$product->ProductCode}}</td>
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Manufacturing Name </td>
-                          <td>{{$product->manufacturer_name}}
+                          <td>{{$product->ManufacturerName}}
                           </td>
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Supplier Name</td>
-                          <td>{{$product->supplier_name}}</td>
+                          <td>{{$product->SupplierName}}</td>
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Product Name</td>
-                          <td>{{$product->product_name}}</td>
+                          <td>{{$product->ProductName}}</td>
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Category Name</td>
-                          <td>{{$product->category_name}}</td>
+                          <td>{{$product->Category->ItemCategoryName}}</td>
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Subcategory Name</td>
-                          <td>{{$product->sub_category_name}}</td>
+                          <td>{{$product->SubCategory->SubCategoryName}}</td>
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Brand Name</td>
-                          <td>{{$product->brand_name}}</td>
+                          <td>{{$product->BrandName}}</td>
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Weight</td>
-                          <td>{{$product->weight}}</td>
+                          <td>{{$product->Weight}}</td>
                         </tr>
                         <tr>
                           <td class="text-uppercase  font-weight-bold"> Unit Of Measurement</td>
-                          <td>{{$product->uom_name}}</td>
+                          <td>{{$product->UnitOfMeasurement->UomName}}</td>
                         </tr>
                       </tbody>
                     </table>

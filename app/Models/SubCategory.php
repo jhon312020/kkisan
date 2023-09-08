@@ -11,4 +11,8 @@ class SubCategory extends Model {
     'sub_category_id',
     'status',
   ];
+
+  public function Product() {
+    return $this->hasMany(Product::class);
+  }
 }

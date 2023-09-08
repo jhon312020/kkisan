@@ -10,4 +10,8 @@ class Application extends Model {
     'name',
     'status',
   ];
+
+  public function Product() {
+    return $this->hasMany(Product::class);
+  }
 }

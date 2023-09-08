@@ -19,4 +19,8 @@ class Item extends Model {
       'status',
 
     ];
+
+    public function Product() {
+      return $this->hasMany(Product::class);
+    }
 }

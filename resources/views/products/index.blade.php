@@ -43,17 +43,23 @@
               @foreach ($products as $product)
               <tr valign="middle">
                 <td>{{ $product->company_name}}</td>
-                <td>{{ $product->product_name}}</td>
-                <td>{{ $product->secondary}}</td>
+                <td>{{ $product->ProductName}}</td>
+                <td>
+                  @if($product->is_secondary == 1)
+                    Yes
+                  @else
+                    No
+                  @endif
+                </td>
                 <td>{{ date('d-M-Y h:i:s a', strtotime($product->created_at))}}</td>
-                <td>{{ $product->product_code}}</td>
-                <td>{{ $product->manufacturer_name}}</td>
-                <td>{{ $product->supplier_name}}</td>
-                <td>{{ $product->category_name}}</td>
-                <td>{{ $product->sub_category_name}}</td>
-                <td>{{ $product->brand_name}}</td>
-                <td>{{ $product->weight}}</td>
-                <td>{{ $product->uom_name}}</td>
+                <td>{{ $product->ProductCode}}</td>
+                <td>{{ $product->ManufacturerName}}</td>
+                <td>{{ $product->SupplierName}}</td>
+                <td>{{ $product->Category->ItemCategoryName}}</td>
+                <td>{{ $product->SubCategory->SubCategoryName}}</td>
+                <td>{{ $product->BrandName}}</td>
+                <td>{{ $product->Weight}}</td>
+                <td>{{ $product->UnitOfMeasurement->UomName}}</td>
                 <td>
                   <a href="{{ route('products.view', $product->id) }}" class="btn btn-primary btn-sm">View</a>
                 </td>

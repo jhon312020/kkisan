@@ -7,25 +7,46 @@ class Product extends Model {
   use HasFactory;
   public $timestamps = true;
   protected $fillable = [
-    'application_id',
-    'product_code',
-    'manufacturer_name',
-    'marketed_by',
-    'secondary',
-    'license_number',
-    'cib_registration_certificate',
-    'supplier_name',
-    'category_id',
-    'category_name',
-    'sub_category_id',
-    'sub_category_name',
-    'item_id',
-    'product_name',
-    'brand_name',
-    'uom_id',
-    'uom_name',
-    'weight',
+    'ApplicationID',
+    'ProductCode',
+    'ManufacturerName',
+    'MarketedBy',
+    'is_secondary',
+    'LicenseNumber',
+    'CIBRegistrationCertificate',
+    'SupplierName',
+    'ItemCategoryID',
+    'SubCategoryID',
+    'SubCategoryName',
+    'ItemID',
+    'ProductName',
+    'BrandName',
+    'UomID',
+    'Weight',
     'company_name',
-    'status',
+    'api_sing_status',
+    'local_status',
   ];
+
+  protected $with = ['Application','UnitOfMeasurement','Category','SubCategory','Item'];
+
+  public function UnitOfMeasurement() {
+    return $this->belongsTo(UnitOfMeasurement::class, 'UomID', 'id');
+  }
+
+  public function Application() {
+    return $this->belongsTo(Application::class, 'ApplicationID', 'id');
+  }
+
+  public function Category() {
+    return $this->belongsTo(Category::class, 'ItemCategoryID', 'id');
+  }
+
+  public function SubCategory() {
+    return $this->belongsTo(SubCategory::class, 'SubCategoryID', 'id');
+  }
+
+  public function Item() {
+    return $this->belongsTo(Item::class, 'ItemID', 'id');
+  }
 }

@@ -21,16 +21,17 @@
                     <div class="col-lg-6 form-group">
                       <label for="exampleInputEmail1">Is Secondary Label Needed</label>
                       <select name="secondary" class="form-control">
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
                       </select>
                     </div>
                     <div class="col-lg-6 form-group">
                       <label for=""> Application Id</label>
                       <select class="form-control" name="applicationid" id="applicationid">
                         @if ($applications)
+                        <option value="">Choose Application</option>
                         @foreach ($applications as $application)
-                        <option value="{{ $application->ApplicationID }}">{{ $application->ApplicationName }}</option>
+                        <option value="{{ $application->id }}">{{ $application->ApplicationName }}</option>
                         @endforeach
                         @endif
                       </select>
@@ -59,8 +60,9 @@
                       <label for="">Category Name</label>
                       <select name="category" class="form-control" id="category">
                         @if ($categories)
+                        <option value="">Choose Category</option>
                         @foreach ($categories as $category)
-                        <option value="{{ $category->ItemCategoryName }}">{{ $category->ItemCategoryName }}</option>
+                        <option value="{{ $category->ItemCategoryID }}">{{ $category->ItemCategoryName }}</option>
                         @endforeach
                         @endif
                       </select>
@@ -108,4 +110,67 @@
 
   </div>
 </div>
+<script type="text/javascript">
+  // $(document).ready(function() {
+  //     $('#applicationid').change(function() {
+  //       console.log("hi");
+  //         var id = $(this).val();
+  //         $.ajax({
+  //             url: '/get-product-category',
+  //             type: "GET",
+  //             data: {
+  //                 id: id,
+  //             },
+  //             success: function(data, textStatus, jqXHR) {
+  //                 if (data.status = true) {
+  //                     console.log(data);
+  //                     const select = document.getElementById("category");
+  //                     data.forEach(item => {
+  //                       if (item.id && item.ItemCategoryName) { // Check if the item has 'id' and 'ItemCategoryName' properties
+  //                         const option = document.createElement("option");
+  //                         option.value = item.id;
+  //                         option.textContent = item.ItemCategoryName;
+  //                         select.appendChild(option);
+  //                       }
+  //                     });
+  //                 } else {
+
+  //                 }
+  //             },
+  //             error: function(jqXHR, textStatus, errorThrown) {
+
+  //             }
+  //         });
+  //     })
+
+  //     $('#applicationid').change(function() {
+  //       console.log("hi");
+  //         var id = $(this).val();
+  //         $.ajax({
+  //             url: '/get-product-subcategory',
+  //             type: "GET",
+  //             data: {
+  //                 id: id,
+  //             },
+  //             success: function(data, textStatus, jqXHR) {
+  //                 if (data.status = true) {
+  //                     console.log(data[0]);
+  //                     // $('#manufacturer_name').val(data[0]['manufacturer_name']);
+  //                     // $('#supplier_name').val(data[0]['supplier_name']);
+  //                     // $('#category_name').val(data[0]['category_name']);
+  //                     // $('#sub_category_name').val(data[0]['sub_category_name']);
+  //                     // $('#brand_name').val(data[0]['brand_name']);
+  //                     // $('#weight').val(data[0]['weight']);
+  //                     // $('#uom_id').val(data[0]['uom_id']);
+  //                 } else {
+
+  //                 }
+  //             },
+  //             error: function(jqXHR, textStatus, errorThrown) {
+
+  //             }
+  //         });
+  //     })
+  //   })
+</script>
 @endsection

@@ -169,38 +169,31 @@ class PrimaryController extends Controller {
     return view('primaries.printLabel',['primary'=>$primary]);  
   }
 
-public function primaryprint($id) { 
+  public function primaryprint($id) { 
     $primary = PrimaryLabel::find($id);
-    
     if ($primary->LabelType->name == 'small') {
         $qrcodes = json_decode($primary->qr_code);
         $qrCodesArray = [];
-        $counter = 0; // Initialize a counter variable
-
+        $counter = 0;
         foreach ($qrcodes as $subArray) {
-            foreach ($subArray as $value) {
-                $qrCodeValue = "01" . str_pad($value, 10, '0', STR_PAD_LEFT);
-                $qrCode = QrCode::generate($qrCodeValue);
-                $qrCodesArray[] = [
-                    'qrCode' => $qrCode,
-                    'value' => $qrCodeValue,
-                ];
-
-                $fileName = "qrcode_$counter.png"; // Use the counter as the filename
-                $filePath = public_path("qrcodes/$fileName");
-                file_put_contents($filePath, $qrCode);
-
-                $counter++; // Increment the counter
-            }
+          foreach ($subArray as $value) {
+            $qrCodeValue = "01" . str_pad($value, 10, '0', STR_PAD_LEFT);
+            $qrCode = QrCode::generate($qrCodeValue);
+            $qrCodesArray[] = [
+                'qrCode' => $qrCode,
+                'value' => $qrCodeValue,
+            ];
+            $fileName = "qrcode_$counter.png";
+            $filePath = public_path("qrcodes/$fileName");
+            file_put_contents($filePath, $qrCode);
+            $counter++;
+          }
         }
-
-        // Load the PDF view and pass the QR codes array
         $pdf = PDF::loadView('primaries.pdf', [
-            'qrCodesArray' => $qrCodesArray,
-            'primary' => $primary,
+          'qrCodesArray' => $qrCodesArray,
+          'primary' => $primary,
         ]);
-
         return $pdf->download('primaries.pdf');
     }
-}
+  }
 }
