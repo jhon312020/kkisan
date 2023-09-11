@@ -23,6 +23,7 @@ class ProductController extends Controller {
   }
 
   public function create() {
+    // $this->postDatatoAPI();
     $guoms = UnitOfMeasurement::where('local_status',1)->get();
     $applications = Application::where('local_status',1)->get();
     $categories = Category::where('local_status',1)->get();
@@ -32,53 +33,81 @@ class ProductController extends Controller {
   }
 
   public function store(Request $request) {
-    $guoms = UnitOfMeasurement::where('UomID',$request->uomid)->first();
-    $applications = Application::where('id',$request->applicationid)->first();
-    $categories = Category::where('id',$request->category)->first();
-    $subcategories = SubCategory::where('SubCategoryName',$request->sub_category)->first();
-    $items = Item::where('ApplicationID',$applications->ApplicationID)
-                  ->orWhere('ItemCategoryID',$categories->ItemCategoryID)
-                  ->orWhere('SubCategoryID',$subcategories->SubCategoryID)
-                  ->orWhere('UomID',$guoms->UomID)
-                  ->first();
-    $lastGeneratedCode = Product::max('ProductCode') ?? 20999999999999;
+    // $this->pr($request->all());
+    $lastGeneratedCode = Product::max('id')??0;
     $newProductCode = $lastGeneratedCode + 1;
-    $productCode = '2100' . str_pad($newProductCode, 10, '0', STR_PAD_LEFT);
-    $lastGeneratedCode = $newProductCode;
+    $productCode = '00002300' . str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
+    // exit;
     $validator = Validator::make($request->all(),[
-      'secondary' => ['required'],
-      'applicationid' => ['required'],
+      'is_secondary' => ['required'],
+      'ApplicationID' => ['required'],
       'company_name' => ['required'],
-      'manufacturer_name' => ['required'],
-      'product_name' => ['required'],
-      'supplier_name' => ['required'],
-      'category' => ['required'],
-      'sub_category' => ['required'],
-      'brand_name' => ['required'],
-      'weight' => ['required'],
-      'uomid' => ['required'],
+      'ManufacturerName' => ['required'],
+      'ProductName' => ['required'],
+      'SupplierName' => ['required'],
+      'ItemCategoryID' => ['required'],
+      'SubCategoryID' => ['required'],
+      'BrandName' => ['required'],
+      'Weight' => ['required'],
+      'UomID' => ['required'],
     ]);
-    if ( $validator->passes() ) {
-      $products = new Product();
-      $products->is_secondary = $request->secondary;
-      $products->ApplicationID = $applications->id;
-      $products->ProductCode = $lastGeneratedCode;
-      $products->company_name = $request->company_name;
-      $products->MarketedBy = $request->company_name;
-      $products->ManufacturerName = $request->manufacturer_name;
-      $products->ProductName = $request->product_name;
-      $products->SupplierName = $request->supplier_name;
-      $products->ItemCategoryID = $categories->id;
-      $products->SubCategoryID = $subcategories->id;
-      $products->SubCategoryName = $request->sub_category;
-      $products->BrandName = $request->brand_name;
-      $products->Weight = $request->weight;
-      $products->UomID = $request->uomid;
-      $products->ItemID = $items->id;
-      $products->save();
+    if ($validator->passes() ) {
+      $product = new Product();
+      $product->is_secondary = $request->is_secondary;
+      $product->ApplicationID = $request->ApplicationID;
+      $product->ProductCode = $productCode;
+      $product->company_name = $request->company_name;
+      $product->MarketedBy = $request->company_name;
+      $product->ManufacturerName = $request->ManufacturerName;
+      $product->ProductName = $request->ProductName;
+      $product->SupplierName = $request->SupplierName;
+      $product->ItemCategoryID = $request->ItemCategoryID;
+      $product->SubCategoryID = $request->SubCategoryID;
+      $product->BrandName = $request->BrandName;
+      $product->Weight = $request->Weight;
+      $product->UomID = $request->UomID;
+      $product->ItemID = 1;
+      if ($product->save()) {
+        $categories = Category::where('ApplicationID', $product->ApplicationID)
+          ->where('local_status',1)
+          ->where('ItemCategoryID', $product->ItemCategoryID)
+          ->pluck('ItemCategoryName', 'ItemCategoryID');
+          // $this->pr($categories);
+        $subCategories = SubCategory::where('ApplicationID', $product->ApplicationID)
+        ->where('local_status',1)
+        ->where('SubCategoryID', $product->SubCategoryID)
+        ->pluck('SubCategoryName', 'SubCategoryID');
+        // $this->pr($subCategories);
+        $productData = array(
+          "ApplicationID"=> $product->ApplicationID,
+          "ProductCode"=> $product->ProductCode,
+          "MarketedBy"=> $product->MarketedBy,
+          "LicenseNumber"=> "test",
+          "CIBRegistrationCertificate"=> "test",
+          "ManufacturerName"=> $product->ManufacturerName,
+          "SupplierName"=> $product->SupplierName,
+          "ItemCategoryID"=> $product->ItemCategoryID,
+          "CategoryName"=> $categories[$product->ItemCategoryID],
+          "SubCategoryID"=> $product->SubCategoryID,
+          "SubCategoryName"=> $subCategories[$product->SubCategoryID] ,
+          "ItemID"=> $product->id,
+          "ProductName"=> $product->ProductName,
+          "BrandName"=> $product->BrandName,
+          "UomID"=> $product->UomID,
+          "Weight"=> $product->Weight
+        );
+        $apiResult = $this->postDatatoAPI("SaveProductMaster", $productData, $this->accessToken);
+        if ($apiResult && $apiResult['success']) {
+          $product->api_sync_status = true;
+          $product->save();
+        }
+      }
+      // exit;
       Alert::success('Congrats', 'Product Successfully Added');
       return redirect()->back();
     } else {
+      // $this->pr($validator->errors());
+      // exit;
       Alert::error('Error', 'Some Error Occurred');
       return redirect()->back()->withErrors($validator)->withInput();
     }
@@ -107,19 +136,19 @@ class ProductController extends Controller {
     ]);
     if ($validator->passes()) {
       $products = Product::find($id);
-      $products->is_secondary = $request->secondary;
-      $products->ApplicationID = $request->applicationid;
-      $products->ProductCode = $request->product_code;
-      $products->company_name = $request->company_name;
-      $products->ManufacturerName = $request->manufacturer_name;
-      $products->ProductName = $request->product_name;
-      $products->SupplierName = $request->supplier_name;
-      $products->ItemCategoryID = $request->category;
-      $products->SubCategoryID = $request->sub_category;
-      $products->BrandName = $request->brand_name;
-      $products->Weight = $request->weight;
-      $products->UomID = $request->uomid;
-      $products->save();
+      $product->is_secondary = $request->secondary;
+      $product->ApplicationID = $request->applicationid;
+      $product->ProductCode = $request->product_code;
+      $product->company_name = $request->company_name;
+      $product->ManufacturerName = $request->manufacturer_name;
+      $product->ProductName = $request->product_name;
+      $product->SupplierName = $request->supplier_name;
+      $product->ItemCategoryID = $request->category;
+      $product->SubCategoryID = $request->sub_category;
+      $product->BrandName = $request->brand_name;
+      $product->Weight = $request->weight;
+      $product->UomID = $request->uomid;
+      $product->save();
       Alert::success('Success', 'Product Successfully Updated');
       return redirect()->route('products.edit',$id);
     } else {
@@ -149,14 +178,14 @@ class ProductController extends Controller {
   }
 
   public function getProductCategory(Request $request) {
-    $categoryid = $request->input('id');
-    $category = Category::select('', '')->where('ApplicationID', $categoryid)->get();
-    return response()->json($category);
+    $applicationID = $request->input('applicationID');
+    $categories = Category::select('ItemCategoryID', 'ItemCategoryName')->where('ApplicationID', $applicationID)->get();
+    return view('products.getProductCategory',['categories'=>$categories]);
   }
 
   public function getProductSubcategory(Request $request) {
-    $subcategoryid = $request->input('id');
-    $subcategory = SubCategory::where('ApplicationID', $subcategoryid)->get();
-    return response()->json($subcategory);
+    $applicationID = $request->input('applicationID');
+    $subcategories = SubCategory::where('ApplicationID', $applicationID)->get();
+    return view('products.getProductSubcategory',['subcategories'=>$subcategories]);
   }
 }
