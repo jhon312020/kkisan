@@ -23,7 +23,9 @@
                     <select name="product_id" id="productid" class="form-control">
                         <option value="">Choose Product</option>
                         @foreach ($products as $product)
-                          <option value="{{ $product->product_code }}">{{ $product->product_name }}({{ date('d-M-Y h:i:s a', strtotime($product->created_at)) }})</option>
+                          <option value="{{ $product->id }}">{{ $product->ProductName }}({{ date('d-M-Y h:i:s a', strtotime($product->created_at)) }})</option>
+                        }
+                        }
                         @endforeach
                     </select>
                   </div>
@@ -37,12 +39,14 @@
                   </div>
                   <div class="col-lg-4 form-group">
                     <label for="">Category Name</label>
-                    <input type="text" class="form-control" id="category_name" placeholder="Enter Category Name" name="category_name" readonly>
+                    <input type="text" class="form-control" id="category_id" placeholder="Enter Category Name" name="category_id" readonly>
                   </div>
+                    <input type="hidden" class="form-control" id="category_name" placeholder="Enter Category Name" name="category_name" readonly>
                   <div class="col-lg-4 form-group">
                     <label for="exampleInputEmail1">Choose Subcategory</label>
-                    <input type="text" class="form-control" id="sub_category_name" placeholder="Enter Category Name" name="sub_category_name" readonly>
+                    <input type="text" class="form-control" id="sub_category_id" placeholder="Enter Category Name" name="sub_category_id" readonly>
                   </div>
+                    <input type="hidden" class="form-control" id="sub_category_name" placeholder="Enter Category Name" name="sub_category_name" readonly>
                   <div class="col-lg-4 form-group">
                     <label for="">Brand Name</label>
                     <input type="text" class="form-control" id="brand_name" placeholder="Enter Brand Name" name="brand_name" readonly>
@@ -53,7 +57,10 @@
                   </div>
                   <div class="col-lg-4 form-group">
                     <label for="exampleInputEmail1"> Unit Of Measurement</label>
-                    <input type="text" class="form-control" id="uom_id" placeholder="Unit Of Measurement" name="uom_id" readonly>
+                    <input type="text" class="form-control" id="uom_name" placeholder="Unit Of Measurement" name="uom_name" readonly>
+                  </div>
+                  <div class="col-lg-4 form-group">
+                    <input type="hidden" class="form-control" id="uom_id" placeholder="Unit Of Measurement" name="uom_id">
                   </div>
                </div>
               </div>
@@ -135,13 +142,16 @@
         success: function(data, textStatus, jqXHR) {
           if (data.status = true) {
             console.log(data[0]);
-            $('#manufacturer_name').val(data[0]['manufacturer_name']);
-            $('#supplier_name').val(data[0]['supplier_name']);
-            $('#category_name').val(data[0]['category_name']);
-            $('#sub_category_name').val(data[0]['sub_category_name']);
-            $('#brand_name').val(data[0]['brand_name']);
-            $('#weight').val(data[0]['weight']);
-            $('#uom_id').val(data[0]['uom_id']);
+            $('#manufacturer_name').val(data[0]['ManufacturerName']);
+            $('#supplier_name').val(data[0]['SupplierName']);
+            $('#category_name').val(data[0]['ItemCategoryID']);
+            $('#category_id').val(data[0]['category']['ItemCategoryName']);
+            $('#sub_category_name').val(data[0]['SubCategoryID']);
+            $('#sub_category_id').val(data[0]['sub_category']['SubCategoryName']);
+            $('#brand_name').val(data[0]['BrandName']);
+            $('#weight').val(data[0]['Weight']);
+            $('#uom_name').val(data[0]['unit_of_measurement']['UomName']);
+            $('#uom_id').val(data[0]['UomID']);
           } else {
 
           }

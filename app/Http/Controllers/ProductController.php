@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Excel;
+use App\Exports\YourExcelExport;
 
 class ProductController extends Controller {
   public function index() {
@@ -113,6 +115,9 @@ class ProductController extends Controller {
     }
   }
 
+  public function show() { 
+  }
+
   public function edit($id) {
     $product = Product::find($id);
     return view('products.edit',['product'=>$product]); 
@@ -187,5 +192,14 @@ class ProductController extends Controller {
     $applicationID = $request->input('applicationID');
     $subcategories = SubCategory::where('ApplicationID', $applicationID)->get();
     return view('products.getProductSubcategory',['subcategories'=>$subcategories]);
+  }
+
+   public function excelView(Request $request) {
+    $products = Product::paginate(10);
+    return view('products.excelView',['products'=>$products]);
+  }
+
+  public function downloadExcel() {
+    return Excel::download(new YourExcelExport, 'Product.xlsx');
   }
 }

@@ -19,4 +19,8 @@ class Category extends Model {
     public function Product() {
       return $this->hasMany(Product::class);
     }
+
+    public function PrimaryLabel() {
+      return $this->hasMany(PrimaryLabel::class);
+    }
 }

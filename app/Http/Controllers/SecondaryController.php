@@ -20,6 +20,7 @@ class SecondaryController extends Controller {
 
   public function create() {
     $products = Product::paginate(10);
+    dd($products);
     return view('secondaries.create', compact('products'));
   }
 

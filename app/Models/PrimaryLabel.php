@@ -11,20 +11,19 @@ class PrimaryLabel extends Model {
     // protected $table = 'primary_labels';
 
     protected $fillable = [
-      'product_code',
-      'manufacturer_name',
-      'supplier_name',
-      'category_name',
-      'sub_category_name',
-      'product_name',
-      'brand_name',
-      'uom_id',
-      'weight',
-      'batch_number',
-      'serial_number',
-      'manufacture_date',
-      'expiry_date',
-      'qr_code',
+      'ProductCode',
+      'ManufacturerName',
+      'SupplierName',
+      'ItemCategoryID',
+      'SubCategoryID',
+      'BrandName',
+      'UomID',
+      'Weight',
+      'BatchNumber',
+      'SerialNumber',
+      'ManufactureDate',
+      'ExpiryDate',
+      'QRCode',
       'status',
       'quantity',
       'label_type',
@@ -32,14 +31,26 @@ class PrimaryLabel extends Model {
 
     ];
 
-    protected $with = ['LabelType','UnitOfMeasurement'];
+    protected $with = ['LabelType','UnitOfMeasurement','Category','SubCategory','Product'];
 
     public function LabelType() {
       return $this->belongsTo(LabelType::class, 'label_type', 'id');
     }
 
     public function UnitOfMeasurement() {
-      return $this->belongsTo(UnitOfMeasurement::class, 'uom_id', 'id');
+      return $this->belongsTo(UnitOfMeasurement::class, 'UomID', 'id');
+    }
+
+    public function Category() {
+      return $this->belongsTo(Category::class, 'ItemCategoryID', 'id');
+    }
+
+    public function SubCategory() {
+      return $this->belongsTo(SubCategory::class, 'SubCategoryID', 'id');
+    }
+
+    public function Product() {
+      return $this->belongsTo(Product::class, 'ProductCode', 'id');
     }
 }
 

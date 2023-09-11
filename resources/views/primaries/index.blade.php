@@ -41,12 +41,12 @@
               @foreach ($primaries as $primary)
               <tr valign="middle">
                 <td>{{ date('d-M-Y h:i:s a', strtotime($primary->created_at))}}</td>
-                <td>{{ $primary->product_name}}</td>
-                <td>{{ $primary->product_code}}</td>
+                <td>{{ $primary->Product->ProductName}}</td>
+                <td>{{ $primary->Product->ProductCode}}</td>
                 <td>{{ $primary->weight}} {{ $primary->UnitOfMeasurement->UomName}}</td>
                 <td>{{ $primary->LabelType->name}}</td>
                 <td>{{ $primary->quantity}}</td>
-                <td>{{ $primary->batch_number}}</td>
+                <td>{{ $primary->BatchNumber}}</td>
                 <td>{{ date('d-M-Y', strtotime($primary->manufacture_date))}}</td>
                 <td>{{ date('d-M-Y', strtotime($primary->expiry_date))}}</td>
                 <td>{{ $primary->mrp}}</td>

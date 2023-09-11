@@ -41,6 +41,10 @@ Route::get('/productHome', [ProductController::class, 'index'])->name('productHo
 
 Route::post('/delete-products', [ProductController::class, 'deleteproduct'])->name('deleteproduct');
 
+Route::get('/products/excelView', [ProductController::class, 'excelView'])->name('products.excelView');
+
+Route::get('/products/excel', [ProductController::class, 'downloadexcel'])->name('download-excel');
+
 Route::resource('products',ProductController::class);
 
 Route::get('/get-product-category',[ProductController::class, 'getProductCategory']);
@@ -48,6 +52,7 @@ Route::get('/get-product-category',[ProductController::class, 'getProductCategor
 Route::get('/get-product-subcategory',[ProductController::class, 'getProductSubcategory']);
 
 Route::get('/products/view/{id}', [ProductController::class, 'view'])->name('products.view');
+
 Route::get('/get-related-data',[PrimaryController::class, 'getRelatedData']);
 
 Route::get('/primaryHome', [PrimaryController::class, 'index'])->name('primaryHome');

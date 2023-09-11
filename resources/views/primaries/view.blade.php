@@ -26,37 +26,34 @@
                 </div>
                 <div class="row">
                   <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->product_code}}</h4>
+                    <h4 class="text-center">{{$primary->Product->ProductCode}}</h4>
                   </div>
                   <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->manufacturer_name}}</h4>
+                    <h4 class="text-center">{{$primary->ManufacturerName}}</h4>
                   </div>
                   <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->supplier_name}}</h4>
+                    <h4 class="text-center">{{$primary->SupplierName}}</h4>
                   </div>
                   <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->category_name}}</h4>
+                    <h4 class="text-center">{{$primary->Category->ItemCategoryName}}</h4>
                   </div>
                   <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->sub_category_name}}</h4>
-                  </div>
-                  <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->manufacturer_name}}</h4>
+                    <h4 class="text-center">{{$primary->SubCategory->SubCategoryName}}</h4>
                   </div>
                   <div class="col-sm-3">
                     <h4 class="text-center">{{$primary->quantity}}</h4>
                   </div>
                   <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->weight}}</h4>
+                    <h4 class="text-center">{{$primary->Weight}}</h4>
                   </div>
                   <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->brand_name}}</h4>
+                    <h4 class="text-center">{{$primary->BrandName}}</h4>
                   </div>
                   <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->manufacture_date}}</h4>
+                    <h4 class="text-center">{{$primary->ManufactureDate}}</h4>
                   </div>
                   <div class="col-sm-3">
-                    <h4 class="text-center">{{$primary->expiry_date}}</h4>
+                    <h4 class="text-center">{{$primary->ExpiryDate}}</h4>
                   </div>
                   <div class="col-sm-3">
                     <h4 class="text-center">{{$primary->mrp}}</h4>

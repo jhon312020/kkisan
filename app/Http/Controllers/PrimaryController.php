@@ -25,18 +25,20 @@ class PrimaryController extends Controller {
 
   public function create() {
     $products = Product::where('local_status', 1)->get();
-    $types = LabelType::where('local_status', 1)->get();
+    $types = LabelType::where('status', 1)->get();
     return view('primaries.create',compact('products','types'));
   }
 
   public function getRelatedData(Request $request) {
     $productCode = $request->input('id');
-    $relatedData = Product::where('product_code', $productCode)->get();
+    $relatedData = Product::with(['Category', 'SubCategory'])
+    ->where('id', $productCode)
+    ->get();
     return response()->json($relatedData);
   }
 
   public function generateNumber() {
-    $lastNumber = PrimaryLabel::max('qr_code');
+    $lastNumber = PrimaryLabel::max('QRCode');
     if ($lastNumber && is_numeric($lastNumber) && $lastNumber >= 2300000001 && $lastNumber <= 2300999999) {
       $nextNumber = $lastNumber + 1;
     } else {
@@ -46,15 +48,17 @@ class PrimaryController extends Controller {
   }
 
   public function store(Request $request) {
-    $product = Product::where('product_code',$request->product_id)->first();
+    $product = Product::where('id',$request->product_id)->first();
     $productName = $product->product_name;
     $searchCategoryName = $request->category;
     $qrcodes = [];
+    $serialNumbers = [];
     if ($request->quantity) {
       $quantity = $request->quantity;
-      
+      $startSerialNumber = 1;     
       for ($i = 0; $i < $quantity; $i++) {
           $qrcodes[] = [+$i => $this->generateNumber() + $i];
+          $serialNumbers[] = $startSerialNumber + $i;
       }
       
     }
@@ -75,23 +79,22 @@ class PrimaryController extends Controller {
     ]);
     if ($validator->passes()) {
       $primaryLabel = new PrimaryLabel();
-      $primaryLabel->product_code = $request->product_id;
-      $primaryLabel->manufacturer_name = $request->manufacturer_name;
-      $primaryLabel->supplier_name = $request->supplier_name;
-      $primaryLabel->category_name = $request->category_name;
-      $primaryLabel->sub_category_name = $request->sub_category_name;
-      $primaryLabel->product_name = $productName;
-      $primaryLabel->brand_name = $request->brand_name;
-      $primaryLabel->uom_id = $request->uom_id;
-      $primaryLabel->weight = $request->weight;
-      $primaryLabel->batch_number = $request->batch_no;
-      $primaryLabel->serial_number = $request->sub_category;
-      $primaryLabel->manufacture_date = $request->mfg_date;
-      $primaryLabel->expiry_date = $request->exp_date;
+      $primaryLabel->ProductCode = $request->product_id;
+      $primaryLabel->ManufacturerName = $request->manufacturer_name;
+      $primaryLabel->SupplierName = $request->supplier_name;
+      $primaryLabel->ItemCategoryID = $request->category_name;
+      $primaryLabel->SubCategoryID = $request->sub_category_name;
+      $primaryLabel->BrandName = $request->brand_name;
+      $primaryLabel->UomID = $request->uom_id;
+      $primaryLabel->Weight = $request->weight;
+      $primaryLabel->BatchNumber = $request->batch_no;
+      $primaryLabel->SerialNumber = json_encode($serialNumbers);
+      $primaryLabel->ManufactureDate = $request->mfg_date;
+      $primaryLabel->ExpiryDate = $request->exp_date;
       $primaryLabel->quantity = $request->quantity;
       $primaryLabel->mrp = $request->mrp;
       $primaryLabel->label_type = $request->type;
-      $primaryLabel->qr_code = json_encode($qrcodes);
+      $primaryLabel->QRCode = json_encode($qrcodes);
       $primaryLabel->save();
       Alert::success('Congrats', 'Primary Successfully Added');
       return redirect()->back();
@@ -172,7 +175,7 @@ class PrimaryController extends Controller {
   public function primaryprint($id) { 
     $primary = PrimaryLabel::find($id);
     if ($primary->LabelType->name == 'small') {
-        $qrcodes = json_decode($primary->qr_code);
+        $qrcodes = json_decode($primary->QRCode);
         $qrCodesArray = [];
         $counter = 0;
         foreach ($qrcodes as $subArray) {
@@ -183,23 +186,24 @@ class PrimaryController extends Controller {
             $fileName = "qrcode_$counter.svg";
             $filefullPath = $filePath.DIRECTORY_SEPARATOR.$fileName;
             $qrCode = QrCode::generate("$qrCodeValue", $filefullPath);
+            // $qrCode = QrCode::format('png')->generate("$qrCodeValue", $filefullPath);
             $qrCodesArray[] = [
-                'qrCode' => $filefullPath,
+                'qrCode' => $fileName,
                 'value' => $qrCodeValue,
             ];            
             // file_put_contents($filePath, $qrCode);
             $counter++;
           }
         }
-        return view('primaries.pdf',['primary'=>$primary, 'qrCodesArray'=>$qrCodesArray]); 
+        // return view('primaries.pdf',['primary'=>$primary, 'qrCodesArray'=>$qrCodesArray]); 
 
         // $this->pr($qrCodesArray);
         // exit;
-        // $pdf = PDF::loadView('primaries.pdf', [
-        //   'qrCodesArray' => $qrCodesArray,
-        //   'primary' => $primary,
-        // ]);
-        // return $pdf->download('primaries.pdf');
+        $pdf = PDF::loadView('primaries.pdf', [
+          'qrCodesArray' => $qrCodesArray,
+          'primary' => $primary,
+        ]);
+        return $pdf->download('primaries.pdf');
     }
   }
 }

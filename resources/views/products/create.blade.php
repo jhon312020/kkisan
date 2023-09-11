@@ -9,6 +9,16 @@
     </div>
     @endif
     <br>
+    <div class="page-header">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page"> Information </li>
+      </ol>
+      <div class="ml-auto">
+        <div class="input-group">
+          <a href="{{ route('products.excelView') }}" type="button" class="btn btn-primary">Import From Excel</a>
+        </div>
+      </div>
+    </div>
     <div class="row">
       <div class="col-lg-12">
         <div class="e-panel card">
