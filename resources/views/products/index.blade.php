@@ -20,56 +20,56 @@
         <div class="card-body">
           <form id="target" action="/delete-products" method="POST">
             @csrf
-            <table id="myTable" class="table table-striped table-responsive" style="width:100%"> 
+            <table id="myTable" class="table table-striped" style="width:100%"> 
               <thead>
-              <tr>
-                <th>Company Name</th>
-                <th>Product Name</th>
-                <th>Is Secondary is there</th>
-                <th>Product Created Date</th>
-                <th>Product Code</th>
-                <th>Manufacturer Name</th>
-                <th>Supplier Name</th>
-                <th>Category</th>
-                <th>Subcategory</th>
-                <th>Brand Name</th>
-                <th>Weight</th>
-                <th>Unit of Measurement</th>
-                <th>Action</th>
-              </tr>
+                <tr>
+                  <th>Company Name</th>
+                  <th>Product Name</th>
+                  <th>Is Secondary is there</th>
+                  <th>Product Created Date</th>
+                  <th>Product Code</th>
+                  <th>Manufacturer Name</th>
+                  <th>Supplier Name</th>
+                  <th>Category</th>
+                  <th>Subcategory</th>
+                  <th>Brand Name</th>
+                  <th>Weight</th>
+                  <th>Unit of Measurement</th>
+                  <th>Action</th>
+                </tr>
               </thead>
               <tbody>
-              @if ($products->isNotEmpty())
-              @foreach ($products as $product)
-              <tr valign="middle">
-                <td>{{ $product->company_name}}</td>
-                <td>{{ $product->ProductName}}</td>
-                <td>
-                  @if($product->is_secondary == 1)
-                    Yes
-                  @else
-                    No
-                  @endif
-                </td>
-                <td>{{ date('d-M-Y h:i:s a', strtotime($product->created_at))}}</td>
-                <td>{{ $product->ProductCode}}</td>
-                <td>{{ $product->ManufacturerName}}</td>
-                <td>{{ $product->SupplierName}}</td>
-                <td>{{ $product->Category->ItemCategoryName}}</td>
-                <td>{{ $product->SubCategory->SubCategoryName}}</td>
-                <td>{{ $product->BrandName}}</td>
-                <td>{{ $product->Weight}}</td>
-                <td>{{ $product->UnitOfMeasurement->UomName}}</td>
-                <td>
-                  <a href="{{ route('products.view', $product->id) }}" class="btn btn-primary btn-sm">View</a>
-                </td>
-              </tr>
-              @endforeach
-              @else
-              <tr>
-                <td colspan="12">Record Not Found</td>
-              </tr>
-              @endif
+                @if ($products->isNotEmpty())
+                @foreach ($products as $product)
+                <tr valign="middle">
+                  <td>{{ $product->company_name}}</td>
+                  <td>{{ $product->ProductName}}</td>
+                  <td>
+                    @if($product->is_secondary == 1)
+                      Yes
+                    @else
+                      No
+                    @endif
+                  </td>
+                  <td>{{ date('d-M-Y h:i:s a', strtotime($product->created_at))}}</td>
+                  <td>{{ $product->ProductCode}}</td>
+                  <td>{{ $product->ManufacturerName}}</td>
+                  <td>{{ $product->SupplierName}}</td>
+                  <td>{{ $product->Category->ItemCategoryName}}</td>
+                  <td>{{ $product->SubCategory->SubCategoryName}}</td>
+                  <td>{{ $product->BrandName}}</td>
+                  <td>{{ $product->Weight}}</td>
+                  <td>{{ $product->UnitOfMeasurement->UomName}}</td>
+                  <td>
+                    <a href="{{ route('products.view', $product->id) }}" class="btn btn-primary btn-sm">View</a>
+                  </td>
+                </tr>
+                @endforeach
+                @else
+                <tr>
+                  <td colspan="13">Record Not Found</td>
+                </tr>
+                @endif
               </tbody>
             </table>
           </form>
@@ -83,27 +83,24 @@
 </div>
 <script>
   $(document).ready(function() {
-    // $('#myTable').DataTable( {
-    //   responsive: true,
-    //   fixedHeader: true,
-    //    dom: 'Bfrtip',
-    //     columnDefs: [
-    //         {
-    //             targets: 1,
-    //             className: 'noVis'
-    //         }
-    //     ],
-    //     buttons: [
-    //         {
-    //             extend: 'colvis',
-    //             columns: ':not(.noVis)'
-    //         },
-            
-    //           'copy', 'excel', 'pdf'
-            
-    //     ]
-    
-    // });
+    $('#myTable').DataTable( {
+      responsive: true,
+      fixedHeader: true,
+      dom: 'Bfrtip',
+      columnDefs: [
+        {
+          targets: 1,
+          className: 'noVis'
+        }
+      ],
+      buttons: [
+        {
+          extend: 'colvis',
+          columns: ':not(.noVis)'
+        },
+        'copy', 'excel', 'pdf'
+      ]
+    });
     $('#selectAll').click(function() {
       $('.dynamicCheckbox').prop('checked', $(this).prop('checked'));
     });

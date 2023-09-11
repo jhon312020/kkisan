@@ -16,7 +16,7 @@
     <div class="d-flex justify-content-between py-3"></div>
     <div class="col-md-12">
       <div class="card">
-            <div class="card-header">{{ __('Primary List') }}  <a href="{{ route('primaries.create') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe39d;</i>Add Primary</a></div>
+        <div class="card-header">{{ __('Primary List') }}  <a href="{{ route('primaries.create') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe39d;</i>Add Primary</a></div>
         <div class="card-body">
           <form id="target" action="/delete-primaries" method="POST">
             @csrf
@@ -29,7 +29,7 @@
                   <th>Product Weight</th>
                   <th>Label Type</th>
                   <th>No. of Labels</th>
-                  <th>Bathch Number</th>
+                  <th>Batch Number</th>
                   <th>Manufacturing Date</th>
                   <th>Expiry Date</th>
                   <th>MRP</th>
@@ -47,8 +47,8 @@
                 <td>{{ $primary->LabelType->name}}</td>
                 <td>{{ $primary->quantity}}</td>
                 <td>{{ $primary->BatchNumber}}</td>
-                <td>{{ date('d-M-Y', strtotime($primary->manufacture_date))}}</td>
-                <td>{{ date('d-M-Y', strtotime($primary->expiry_date))}}</td>
+                <td>{{ date('d-M-Y', strtotime($primary->ManufactureDate))}}</td>
+                <td>{{ date('d-M-Y', strtotime($primary->ExpiryDate))}}</td>
                 <td>{{ $primary->mrp}}</td>
                 <td>
                   <a href="{{ route('primaries.view', $primary->id) }}" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe254;</i>View</a>
@@ -57,7 +57,7 @@
               @endforeach
               @else
               <tr>
-                <td colspan="6">Record Not Found</td>
+                <td colspan="11">Record Not Found</td>
               </tr>
               @endif
             </tbody>

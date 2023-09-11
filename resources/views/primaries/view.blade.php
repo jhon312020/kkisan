@@ -11,7 +11,6 @@
     <br>
     <div class="row">
       <div class="col-12"> 
-
         <div class="card" id="printMe">
           <div class="card-header"><a href="{{ route('primaries.printLabel', $primary->id) }}" style="float:right; 10px;" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe39d;</i> Print Label</a></div>
           <div class=" mb-0">
@@ -20,7 +19,7 @@
                 <div class="col-md-12">
                   <div class="Content-header1 col-lg-12">
                     <h3 class="mb-0 m-t-5 m-b-5 text-center">
-                      {{$primary->product_name}}
+                      {{$primary->Product->ProductName}}
                     </h3>
                   </div>
                 </div>

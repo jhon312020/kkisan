@@ -47,21 +47,70 @@ class PrimaryController extends Controller {
     return $nextNumber;
   }
 
+  // public function store(Request $request) {
+  //   $product = Product::where('id',$request->product_id)->first();
+  //   $productName = $product->product_name;
+  //   $searchCategoryName = $request->category;
+  //   $qrcodes = [];
+  //   $serialNumbers = [];
+  //   if ($request->quantity) {
+  //     $quantity = $request->quantity;
+  //     $startSerialNumber = 1;     
+  //     for ($i = 0; $i < $quantity; $i++) {
+  //         $qrcodes[] = [+$i => $this->generateNumber() + $i];
+  //         $serialNumbers[] = $startSerialNumber + $i;
+  //     }
+      
+  //   }
+  //   $validator = Validator::make($request->all(),[
+  //     'product_id' => ['required'],
+  //     'manufacturer_name' => ['required'],
+  //     'supplier_name' => ['required'],
+  //     'category_name' => ['required'],
+  //     'sub_category_name' => ['required'],
+  //     'brand_name' => ['required'],
+  //     'weight' => ['required'],
+  //     'uom_id' => ['required'],
+  //     'batch_no' => ['required'],
+  //     'mfg_date' => ['required'],
+  //     'exp_date' => ['required'],
+  //     'quantity' => ['required'],
+  //     'mrp' => ['required'],
+  //   ]);
+  //   if ($validator->passes()) {
+  //     $primaryLabel = new PrimaryLabel();
+  //     $primaryLabel->ProductCode = $request->product_id;
+  //     $primaryLabel->ManufacturerName = $request->manufacturer_name;
+  //     $primaryLabel->SupplierName = $request->supplier_name;
+  //     $primaryLabel->ItemCategoryID = $request->category_name;
+  //     $primaryLabel->SubCategoryID = $request->sub_category_name;
+  //     $primaryLabel->BrandName = $request->brand_name;
+  //     $primaryLabel->UomID = $request->uom_id;
+  //     $primaryLabel->Weight = $request->weight;
+  //     $primaryLabel->BatchNumber = $request->batch_no;
+  //     $primaryLabel->SerialNumber = json_encode($serialNumbers);
+  //     $primaryLabel->ManufactureDate = $request->mfg_date;
+  //     $primaryLabel->ExpiryDate = $request->exp_date;
+  //     $primaryLabel->quantity = $request->quantity;
+  //     $primaryLabel->mrp = $request->mrp;
+  //     $primaryLabel->label_type = $request->type;
+  //     $primaryLabel->QRCode = json_encode($qrcodes);
+  //     $primaryLabel->save();
+  //     Alert::success('Congrats', 'Primary Successfully Added');
+  //     return redirect()->back();
+  //   } else {
+  //     Alert::error('Error', 'Some Error Occurred');
+  //     return redirect()->back()->withErrors($validator)->withInput();
+  //   }
+  // }
+
   public function store(Request $request) {
     $product = Product::where('id',$request->product_id)->first();
     $productName = $product->product_name;
     $searchCategoryName = $request->category;
     $qrcodes = [];
     $serialNumbers = [];
-    if ($request->quantity) {
-      $quantity = $request->quantity;
-      $startSerialNumber = 1;     
-      for ($i = 0; $i < $quantity; $i++) {
-          $qrcodes[] = [+$i => $this->generateNumber() + $i];
-          $serialNumbers[] = $startSerialNumber + $i;
-      }
-      
-    }
+
     $validator = Validator::make($request->all(),[
       'product_id' => ['required'],
       'manufacturer_name' => ['required'],
@@ -78,6 +127,16 @@ class PrimaryController extends Controller {
       'mrp' => ['required'],
     ]);
     if ($validator->passes()) {
+      if ($request->quantity) {
+        $quantity = $request->quantity;
+        $startSerialNumber = 1;
+        $lastRecord = PrimaryLabel::sum('quantity')??1;     
+        for ($i = 0; $i < $quantity; $i++) {
+          // productCode = '00002300' . str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
+          $qrcodes[] = '2300'.$lastRecord;
+          $serialNumbers[] = $startSerialNumber + $i;
+        }
+      }
       $primaryLabel = new PrimaryLabel();
       $primaryLabel->ProductCode = $request->product_id;
       $primaryLabel->ManufacturerName = $request->manufacturer_name;
