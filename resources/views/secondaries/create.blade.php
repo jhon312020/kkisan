@@ -22,8 +22,8 @@
                       <label for="exampleInputEmail1">Choose Product with Batch Number</label>
                       <select name="labelid" id="labelid" class="form-control">
                         <option value="">Choose Product with Batch Number</option>
-                        @foreach ($products as $product)
-                          <option value="{{ $product->product_code }}">{{ $product->product_name }}</option>
+                        @foreach ($primaries as $primary)
+                          <option value="{{ $primary->Product->id }}">{{ $primary->Product->ProductName }} ({{ $primary->BatchNumber }}) ({{ date('d-M-Y h:i:s a', strtotime($primary->created_at)) }})</option>
                         @endforeach
                       </select>
                     </div>
@@ -58,7 +58,7 @@
           id: id,
         },
         success: function(data, textStatus, jqXHR) {
-          if (data.status == true) {
+          if (data) {
             $('#quantity').val(data[0]['quantity']);
           } 
         },

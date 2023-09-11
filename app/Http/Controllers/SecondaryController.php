@@ -4,6 +4,7 @@ use App\Models\SecondaryLabel;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\PrimaryLabel;
 use Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -19,14 +20,17 @@ class SecondaryController extends Controller {
   }
 
   public function create() {
-    $products = Product::paginate(10);
-    dd($products);
-    return view('secondaries.create', compact('products'));
+    $products = Product::where('is_secondary',1)->get();
+    $productIds = $products->pluck('id')->toArray();
+    $primaries = PrimaryLabel::whereIn('ProductCode',$productIds)->get();
+    return view('secondaries.create', compact('products','primaries'));
   }
 
   public function getSRelatedData(Request $request) {
     $productCode = $request->input('id');
-    $relatedData = Product::where('product_code', $productCode)->get();
+    $relatedData = PrimaryLabel::where('id', $productCode)
+                ->select('quantity')
+                ->get();
     return response()->json($relatedData);
   }
 
