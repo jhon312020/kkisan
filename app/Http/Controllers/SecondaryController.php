@@ -35,41 +35,32 @@ class SecondaryController extends Controller {
   }
 
   public function store(Request $request) {
+    $lastGeneratedCode = SecondaryLabel::max('id')??0;
+    $newSecondaryCode = $lastGeneratedCode + 1;
+    $SecondaryCode = '00002300' . str_pad($newSecondaryCode, 12, '0', STR_PAD_LEFT);
+    $lastGeneratedQRCode = SecondaryLabel::max('Secondary_QRCode')??0;
+    $newSecondaryQRCode = $lastGeneratedQRCode + 1;
+    $SecondaryQRCode = '002300' . str_pad($newSecondaryQRCode, 4, '0', STR_PAD_LEFT);
+    $product = Product::find($request->labelid)->first();
+    $primary = PrimaryLabel::where('ProductCode', $product->id)->first();
+    $Totalquantity = $request->quantity;
+    $requriedquantity = $request->label_numbers;
+    $divisionResult = $Totalquantity / $requriedquantity;
     $validator = Validator::make($request->all(),[
-      'product_id' => ['required'],
-      'manufacturer_name' => ['required'],
-      'supplier_name' => ['required'],
-      'category_name' => ['required'],
-      'sub_category_name' => ['required'],
-      'brand_name' => ['required'],
-      'weight' => ['required'],
-      'uom_id' => ['required'],
-      'batch_no' => ['required'],
-      'mfg_date' => ['required'],
-      'exp_date' => ['required'],
-      'quantity' => ['required'],
-      'mrp' => ['required'],
-
+      'labelid' => ['required'],
+      'quantity' => ['required', 'integer'],
+      'label_numbers' => ['required', 'integer', 'max:20', 'min:5'],
     ]);
     if ($validator->passes()) {
       $secondaries = new SecondaryLabel();
-      $secondaries->product_code = $request->product_id;
-      $secondaries->manufacturer_name = $request->manufacturer_name;
-      $secondaries->supplier_name = $request->supplier_name;
-      $secondaries->category_name = $request->category_name;
-      $secondaries->sub_category_name = $request->sub_category_name;
-      $secondaries->product_name = $request->secondary_name;
-      $secondaries->brand_name = $request->brand_name;
-      $secondaries->uom_id = $request->uom_id;
-      $secondaries->weight = $request->weight;
-      
-      $secondaries->batch_number = $request->batch_no;
-      $secondaries->serial_number = $request->sub_category;
-      $secondaries->manufacture_date = $request->mfg_date;
-      $secondaries->expiry_date = $request->exp_date;
-      $secondaries->quantity = $request->quantity;
-      $secondaries->mrp = $request->mrp;
-      $secondaries->qr_code = $qrcode;
+      $secondaries->SecondaryContainerCode = $SecondaryCode;
+      $secondaries->Secondary_quantity = $request->label_numbers;
+      $secondaries->Secondary_QRCode = $SecondaryQRCode;
+      $secondaries->ProductCode = $request->labelid;
+      $secondaries->primary_label = $primary->id;
+      $secondaries->SerialNumber = $request->secondary_name;
+      $secondaries->QRCode = $request->brand_name;
+      $secondaries->label_type = $primary->label_type;
       $secondaries->save();
       Alert::success('Congrats', 'Secondary Successfully Added');
       return redirect()->back();

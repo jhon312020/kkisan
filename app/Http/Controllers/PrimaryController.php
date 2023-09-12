@@ -129,7 +129,7 @@ class PrimaryController extends Controller {
     if ($validator->passes()) {
       if ($request->quantity) {
         $lastRecord = PrimaryLabel::sum('quantity') ?? 0;  
-        $startSerialNumber = 0;   
+        $startSerialNumber = 1;   
         $quantity = $request->quantity;
         for ($i = 0; $i < $quantity; $i++) {
           $lastRecord++;

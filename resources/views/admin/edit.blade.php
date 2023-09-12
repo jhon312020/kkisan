@@ -27,10 +27,10 @@
                     <div class="card-body">
                       <center>
                       <img src="{{asset($user->profile_pic)}}" style="width:100px; height: 100px;">
-                      <h4>{{ auth()->user()->name }} </h4>
-                      <h4>{{ auth()->user()->company_name }} </h4>
+                      <h4>{{ $user->name }} </h4>
+                      <h4>{{ $user->UserProfile->company_name }} </h4>
                       <!-- <br> -->
-                      <h4>{{ auth()->user()->email }}</h4>
+                      <h4>{{ $user->email }}</h4>
                       </center>
                     </div>
                   </div>
@@ -40,11 +40,11 @@
                 <div class="card">
                   <div class="card-header" style="background-color:blue;color: whitesmoke;">{{ __('Admin Details') }}</div>
                   <div class="card-body">
-                    <h4>Id:{{ auth()->user()->id }} </h4>
-                    <h4>Name:{{ auth()->user()->name }} </h4>
-                    <h4>Email: {{ auth()->user()->email }}</h4>
-                    <h4>Mobile Number:{{auth()->user()->phone}} </h4>
-                    <h4>Address:{{auth()->user()->address}} </h4>
+                    <h4>Id:{{ $user->id }} </h4>
+                    <h4>Name:{{ $user->name }} </h4>
+                    <h4>Email: {{ $user->email }}</h4>
+                    <h4>Mobile Number:{{$user->UserProfile->phone}} </h4>
+                    <h4>Address:{{$user->UserProfile->address}} </h4>
                   </div>
                 </div>
               </div>
@@ -71,7 +71,7 @@
                         <div class="row mb-3">
                           <label for="company_name" class="col-md-4 col-form-label text-md-end">{{ __('Company Name') }}</label>
                             <div class="col-md-6">
-                              <input id="company_name" type="text" class="form-control @error('company_name') is-invalid @enderror" name="company_name" value="{{ old('company_name',$user->company_name) }}"  autocomplete="company_name" autofocus>
+                              <input id="company_name" type="text" class="form-control @error('company_name') is-invalid @enderror" name="company_name" value="{{ old('company_name',$user->UserProfile->company_name) }}"  autocomplete="company_name" autofocus>
                                 @error('company_name')
                                   <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -84,7 +84,7 @@
                           <label for="company_address" class="col-md-4 col-form-label text-md-end">{{ __('Company Address
                           ') }}</label>
                             <div class="col-md-6">
-                              <input id="company_address" type="text" class="form-control @error('company_address') is-invalid @enderror" name="company_address" value="{{ old('company_address',$user->company_address) }}"  autocomplete="company_address" autofocus>
+                              <input id="company_address" type="text" class="form-control @error('company_address') is-invalid @enderror" name="company_address" value="{{ old('company_address',$user->UserProfile->company_address) }}"  autocomplete="company_address" autofocus>
                                 @error('company_address')
                                   <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -96,7 +96,7 @@
                         <div class="row mb-3">
                           <label for="company_district" class="col-md-4 col-form-label text-md-end">{{ __('Company District') }}</label>
                             <div class="col-md-6">
-                              <input id="company_district" type="text" class="form-control @error('company_district') is-invalid @enderror" name="company_district" value="{{ old('company_district',$user->company_district) }}"  autocomplete="company_district" autofocus>
+                              <input id="company_district" type="text" class="form-control @error('company_district') is-invalid @enderror" name="company_district" value="{{ old('company_district',$user->UserProfile->company_district) }}"  autocomplete="company_district" autofocus>
                                 @error('company_district')
                                   <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -108,7 +108,7 @@
                         <div class="row mb-3">
                           <label for="company_state" class="col-md-4 col-form-label text-md-end">{{ __('Company State') }}</label>
                             <div class="col-md-6">
-                              <input id="company_state" type="text" class="form-control @error('company_state') is-invalid @enderror" name="company_state" value="{{ old('company_state',$user->company_state) }}"  autocomplete="company_state" autofocus>
+                              <input id="company_state" type="text" class="form-control @error('company_state') is-invalid @enderror" name="company_state" value="{{ old('company_state',$user->UserProfile->company_state) }}"  autocomplete="company_state" autofocus>
                                 @error('company_state')
                                   <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -120,7 +120,7 @@
                         <div class="row mb-3">
                           <label for="company_pincode" class="col-md-4 col-form-label text-md-end">{{ __('Company Pincode') }}</label>
                             <div class="col-md-6">
-                              <input id="company_pincode" type="text" class="form-control @error('company_pincode') is-invalid @enderror" name="company_pincode" value="{{ old('company_pincode',$user->company_pincode) }}"  autocomplete="company_pincode" autofocus>
+                              <input id="company_pincode" type="text" class="form-control @error('company_pincode') is-invalid @enderror" name="company_pincode" value="{{ old('company_pincode',$user->UserProfile->company_pincode) }}"  autocomplete="company_pincode" autofocus>
                                 @error('company_pincode')
                                   <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -156,7 +156,7 @@
                         <div class="row mb-3">
                           <label for="phone" class="col-md-4 col-form-label text-md-end">{{ __('Phone') }}</label>
                             <div class="col-md-6">
-                              <input id="phone" type="number" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone',$user->phone) }}" autocomplete="phone">
+                              <input id="phone" type="number" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone',$user->UserProfile->phone) }}" autocomplete="phone">
                                 @error('phone')
                                   <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -168,8 +168,32 @@
                         <div class="row mb-3">
                           <label for="address" class="col-md-4 col-form-label text-md-end">{{ __('Address') }}</label>
                             <div class="col-md-6">
-                              <input id="address" type="address" class="form-control @error('address') is-invalid @enderror" name="address" value="{{ old('address',$user->address) }}" autocomplete="address">
+                              <input id="address" type="address" class="form-control @error('address') is-invalid @enderror" name="address" value="{{ old('address',$user->UserProfile->address) }}" autocomplete="address">
                                 @error('address')
+                                  <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                  </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                          <label for="LicenseNumber" class="col-md-4 col-form-label text-md-end">{{ __('LicenseNumber') }}</label>
+                            <div class="col-md-6">
+                              <input id="LicenseNumber" type="LicenseNumber" class="form-control @error('LicenseNumber') is-invalid @enderror" name="LicenseNumber" value="{{ old('LicenseNumber',$user->UserProfile->LicenseNumber) }}" autocomplete="LicenseNumber">
+                                @error('LicenseNumber')
+                                  <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                  </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                          <label for="CIBRegistrationCertificate" class="col-md-4 col-form-label text-md-end">{{ __('CIBRegistrationCertificate') }}</label>
+                            <div class="col-md-6">
+                              <input id="CIBRegistrationCertificate" type="CIBRegistrationCertificate" class="form-control @error('CIBRegistrationCertificate') is-invalid @enderror" name="CIBRegistrationCertificate" value="{{ old('CIBRegistrationCertificate',$user->UserProfile->CIBRegistrationCertificate) }}" autocomplete="CIBRegistrationCertificate">
+                                @error('CIBRegistrationCertificate')
                                   <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                   </span>
@@ -181,7 +205,7 @@
                           <label for="profile_pic" class="col-md-4 col-form-label text-md-end">{{ __('Profile Pic') }}</label>
                             <div class="col-md-6">
                               <!-- <img src="{{asset($user->profile_pic)}}" style="width:100px; height: 100px;"> -->
-                              <input id="profile_pic" type="file" class="form-control @error('profile_pic') is-invalid @enderror" name="profile_pic" value="{{ old('profile_pic', $user->profile_pic) }}">
+                              <input id="profile_pic" type="file" class="form-control @error('profile_pic') is-invalid @enderror" name="profile_pic" value="{{ old('profile_pic', $user->UserProfile->profile_pic) }}">
                                 @error('profile_pic')
                                   <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>

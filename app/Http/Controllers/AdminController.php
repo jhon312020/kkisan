@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\UserProfile;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Auth;
@@ -67,25 +68,31 @@ class AdminController extends Controller {
       'company_state' => ['nullable', 'string', 'max:255'],
       'company_pincode' => ['nullable', 'string', 'max:255'],
       'address' => ['nullable', 'string', 'max:255'],
+      'LicenseNumber' => ['nullable'],
+      'CIBRegistrationCertificate' => ['nullable'],
       'profile_pic' => ['nullable'],
     ]);
     if ($validator->passes() ) {
       $user = User::find($id);
+      $user_profile = UserProfile::find($id);
       $user->name = $request->name;
       $user->email = $request->email;
-      $user->phone = $request->phone;
-      $user->company_name = $request->company_name;
-      $user->company_address = $request->company_address;
-      $user->company_district = $request->company_district;
-      $user->company_state = $request->company_state;
-      $user->company_pincode = $request->company_pincode;
-      $user->address = $request->address;
+      $user_profile->phone = $request->phone;
+      $user_profile->company_name = $request->company_name;
+      $user_profile->company_address = $request->company_address;
+      $user_profile->company_district = $request->company_district;
+      $user_profile->company_state = $request->company_state;
+      $user_profile->company_pincode = $request->company_pincode;
+      $user_profile->address = $request->address;
+      $user_profile->LicenseNumber = $request->LicenseNumber;
+      $user_profile->CIBRegistrationCertificate = $request->CIBRegistrationCertificate;
       if ( $request->hasFile('profile_pic') ) {
-        $user->profile_pic = $request->profile_pic;
-        $image_new_name = time() . $user->profile_pic->getClientOriginalName();
-        $user->profile_pic->move('images',$image_new_name);
-        $user->profile_pic= 'images/' . $image_new_name;
+        $user_profile->profile_pic = $request->profile_pic;
+        $image_new_name = time() . $user_profile->profile_pic->getClientOriginalName();
+        $user_profile->profile_pic->move('images',$image_new_name);
+        $user_profile->profile_pic= 'images/' . $image_new_name;
       }
+      $user_profile->save();
       $user->save();
       Alert::success('Success', 'User Successfully Updated');
       return redirect()->route('users.edit',$id);

@@ -53,4 +53,8 @@ class Product extends Model {
   public function PrimaryLabel() {
     return $this->hasMany(PrimaryLabel::class);
   }
+
+  public function SecondaryLabel() {
+    return $this->hasMany(SecondaryLabel::class);
+  }
 }

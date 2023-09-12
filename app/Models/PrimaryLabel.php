@@ -52,5 +52,9 @@ class PrimaryLabel extends Model {
     public function Product() {
       return $this->belongsTo(Product::class, 'ProductCode', 'id');
     }
+
+    public function SecondaryLabel() {
+      return $this->hasMany(SecondaryLabel::class);
+    }
 }
 

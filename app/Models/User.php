@@ -20,17 +20,18 @@ class User extends Authenticatable {
   protected $fillable = [
     'name',
     'email',
-    'phone',
     'password',
     'role_id',
-    'company_name',
-    'company_address',
-    'company_district',
-    'company_state',
-    'company_pincode',
-    'address',
-    'profile_pic',
+    'profile_id',
+    'last_login',
+    'is_active',
   ];
+
+  protected $with = ['UserProfile'];
+
+  public function UserProfile() {
+    return $this->belongsTo(UserProfile::class, 'profile_id', 'id');
+  }
 
   /**
    * The attributes that should be hidden for serialization.

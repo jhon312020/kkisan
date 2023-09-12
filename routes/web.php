@@ -103,6 +103,7 @@ Route::delete('/users/{user}/permissions/{permission}',[AdminController::class, 
 Route::get('/get-srelated-data',[SecondaryController::class, 'getSRelatedData']);
 Route::get('/secondaries/index',[SecondaryController::class, 'index'])->name('secondaries.index');
 Route::get('/secondaries/create',[SecondaryController::class, 'create'])->name('secondaries.create');
+Route::post('secondaries/store',[SecondaryController::class, 'store'])->name('secondaries.store');
 
 });
 

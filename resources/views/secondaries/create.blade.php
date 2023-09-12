@@ -14,7 +14,7 @@
         <div class="e-panel card">
           <div class="card-header">{{ __('Add Secondary') }} <a href="{{ url('/secondaries/index') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="fa-brands fa-primaries-hunt"></i>Secondary</a></div>
           <div class="card-body">
-            <form method="POST" action="{{ route('primaries.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('secondaries.store') }}" enctype="multipart/form-data">
               @csrf      
               <div class="card-body">
                 <div class="row">
@@ -35,7 +35,7 @@
                     <div class="col-lg-6 form-group">
                       <label for="">Required No. of Primary Labels in One Secondary </label>
                       <input type="text" class="form-control" id=""
-                            placeholder="Enter Quantity" name="label_numbers">
+                            placeholder="Enter Quantity" name="label_numbers" min="5" max="20">
                     </div>
                 </div>
               </div>
