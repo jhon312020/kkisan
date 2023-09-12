@@ -38,7 +38,9 @@ class ProductController extends Controller {
     // $this->pr($request->all());
     $lastGeneratedCode = Product::max('id')??0;
     $newProductCode = $lastGeneratedCode + 1;
-    $productCode = '00002300' . str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
+    $portalID = '23';
+    $vendorID = '00';
+    $productCode = '0000'.$portalID.$vendorID . str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
     // exit;
     $validator = Validator::make($request->all(),[
       'is_secondary' => ['required'],
