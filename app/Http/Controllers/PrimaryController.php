@@ -128,12 +128,13 @@ class PrimaryController extends Controller {
     ]);
     if ($validator->passes()) {
       if ($request->quantity) {
+        $lastRecord = PrimaryLabel::sum('quantity') ?? 0;  
+        $startSerialNumber = 0;   
         $quantity = $request->quantity;
-        $startSerialNumber = 1;
-        $lastRecord = PrimaryLabel::sum('quantity')??1;     
         for ($i = 0; $i < $quantity; $i++) {
-          // productCode = '00002300' . str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
-          $qrcodes[] = '2300'.$lastRecord;
+          $lastRecord++;
+          $qrCode = '2300' . str_pad($lastRecord, 6, '0', STR_PAD_LEFT);
+          $qrCodes[] = $qrCode;
           $serialNumbers[] = $startSerialNumber + $i;
         }
       }
@@ -153,7 +154,7 @@ class PrimaryController extends Controller {
       $primaryLabel->quantity = $request->quantity;
       $primaryLabel->mrp = $request->mrp;
       $primaryLabel->label_type = $request->type;
-      $primaryLabel->QRCode = json_encode($qrcodes);
+      $primaryLabel->QRCode = json_encode($qrCodes);
       $primaryLabel->save();
       Alert::success('Congrats', 'Primary Successfully Added');
       return redirect()->back();
@@ -184,7 +185,7 @@ class PrimaryController extends Controller {
       'weight' => ['string', 'max:255'],
       'uomid' => ['string', 'max:255'],
     ]);
-    if ($validator->passes() ) {
+    if ($validator->passes()) {
       $primaryLabel = PrimaryLabel::find($id);
       $primaryLabel->secondary = $request->secondary;
       $primaryLabel->applicationid = $request->applicationid;
@@ -237,8 +238,8 @@ class PrimaryController extends Controller {
         $qrcodes = json_decode($primary->QRCode);
         $qrCodesArray = [];
         $counter = 0;
-        foreach ($qrcodes as $subArray) {
-          foreach ($subArray as $value) {
+        foreach ($qrcodes as $value) {
+          // foreach ($subArray as $value) {
             $qrCodeValue = "01" . str_pad($value, 10, '0', STR_PAD_LEFT);
             $filePath = public_path("qrcodes");
             // contiune;
@@ -247,12 +248,12 @@ class PrimaryController extends Controller {
             $qrCode = QrCode::generate("$qrCodeValue", $filefullPath);
             // $qrCode = QrCode::format('png')->generate("$qrCodeValue", $filefullPath);
             $qrCodesArray[] = [
-                'qrCode' => $fileName,
-                'value' => $qrCodeValue,
+              'qrCode' => $filefullPath,
+              'value' => $qrCodeValue,
             ];            
             // file_put_contents($filePath, $qrCode);
             $counter++;
-          }
+          // }
         }
         // return view('primaries.pdf',['primary'=>$primary, 'qrCodesArray'=>$qrCodesArray]); 
 
