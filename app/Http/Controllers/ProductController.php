@@ -39,7 +39,7 @@ class ProductController extends Controller {
     $lastGeneratedCode = Product::max('id')??0;
     $newProductCode = $lastGeneratedCode + 1;
     $portalID = '23';
-    $vendorID = '00';
+    $vendorID = '99';
     $productCode = '0000'.$portalID.$vendorID . str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
     // exit;
     $validator = Validator::make($request->all(),[
@@ -61,7 +61,7 @@ class ProductController extends Controller {
       $product->ApplicationID = $request->ApplicationID;
       $product->ProductCode = $productCode;
       $product->company_name = $request->company_name;
-      $product->MarketedBy = $request->company_name;
+      $product->MarketedBy = $request->MarketedBy;
       $product->ManufacturerName = $request->ManufacturerName;
       $product->ProductName = $request->ProductName;
       $product->SupplierName = $request->SupplierName;
@@ -70,7 +70,7 @@ class ProductController extends Controller {
       $product->BrandName = $request->BrandName;
       $product->Weight = $request->Weight;
       $product->UomID = $request->UomID;
-      $product->ItemID = 1;
+      $product->ItemID = $request->ItemID;
       if ($product->save()) {
         $categories = Category::where('ApplicationID', $product->ApplicationID)
           ->where('local_status',1)
@@ -94,14 +94,14 @@ class ProductController extends Controller {
           "CategoryName"=> $categories[$product->ItemCategoryID],
           "SubCategoryID"=> $product->SubCategoryID,
           "SubCategoryName"=> $subCategories[$product->SubCategoryID] ,
-          "ItemID"=> $product->id,
+          "ItemID"=> $product->ItemID?$product->ItemID:0,
           "ProductName"=> $product->ProductName,
           "BrandName"=> $product->BrandName,
           "UomID"=> $product->UomID,
           "Weight"=> $product->Weight
         );
         $apiResult = $this->postDatatoAPI("SaveProductMaster", $productData, $this->accessToken);
-        if ($apiResult && $apiResult['success']) {
+        if ($apiResult && isset($apiResult['success'])) {
           $product->api_sync_status = true;
           $product->save();
         }
@@ -194,6 +194,12 @@ class ProductController extends Controller {
     $applicationID = $request->input('applicationID');
     $subcategories = SubCategory::where('ApplicationID', $applicationID)->get();
     return view('products.getProductSubcategory',['subcategories'=>$subcategories]);
+  }
+
+  public function getProductItems(Request $request) {
+    $applicationID = $request->input('applicationID');
+    $items = Item::where('ApplicationID', $applicationID)->where('local_status', 1)->get();
+    return view('products.getProductItems', ['items'=>$items]);
   }
 
    public function excelView(Request $request) {

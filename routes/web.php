@@ -50,6 +50,7 @@ Route::resource('products',ProductController::class);
 Route::get('/get-product-category',[ProductController::class, 'getProductCategory']);
 
 Route::get('/get-product-subcategory',[ProductController::class, 'getProductSubcategory']);
+Route::get('/get-product-items',[ProductController::class, 'getProductItems']);
 
 Route::get('/products/view/{id}', [ProductController::class, 'view'])->name('products.view');
 

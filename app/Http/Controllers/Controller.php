@@ -5,13 +5,14 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Log;
 
 class Controller extends BaseController {
   use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
   public $apiURL = "https://kkisan.karnataka.gov.in/KKISANQRAPI/api/";
   public $userName = "sadukthi@gmail.com";
   public $password = '$Adukthi@432!';
-  public $accessToken = 'suHI5iP42Gjo32_1tiQ8MBivDudAQkNXb_sp-JWH1qn6x4QjD3Ps-VOchwszqboJTV6FGi4af5UoJLvg75gm2ZJqxUVajblgDTdITm53aPydxYJK9eHyZEVg_WMK7Poix_X5ZLrEjPVewNmmoS6KuD_mXCy-ADe_kkudyh8VjD8YeDbRRebH3icrh3m_4vBFlDHqBX8gro6Etjy7tDGuzZ9DrdPWktVrZvru4O9pt0DvWcsmCREITonJ7FYXMCE0fx_mxxC9uZ2uDcYfsdj6yU4Mbt7XhkAdBIyHTpEPZVy2820knBq3Q16K9EG9rO7cmRGUKgsRUDJoOKhbpnUZTDmjTdJvI1ZcGjZ0fbrNMChW1c5NV-6ykoDxQ4mz8gDk1EHhyCIEFLlLSOqC5ngQoVXgsTdCzodxsLhnYsKZIaG3kVes8btWW35K6CSCAyvcdzLirr-ZDjMn44jn5ctH43xnCX-X92r1LpxZm9FS88TVxBqGi6gZVjq_NPiLroWsbK911Nit4pBT0U82OcuuyQ';
+  public $accessToken = 'nhE_ic8dQ40btK2TfoFP20AmcEs8-_rU0symrnZ4ECy19i6MnQ5lakTqt8KeiQJyvMlnzQavYxdonnlzk28hsvvrASgpAvdtoQxwPd3pS23KAcC2KySIXAqFM7C9Dd-dXYtxxMoolrKMAbHHS5zzofd-76fMWFPeWk7aM91G7YIVMNHgNxXzlNz1Bvm-DJHnqf1Y1NQi4q9H8ks3NOEAoPBTNzi7dj54UwtBdU6GyZa8pjtPVfvpChN67sGluZBE41uE51hImaWM5hDpMTVErVFu_i0D2YNljMXWuoAB1SrmJKWS3RLB4CbLCfoXFokIHFDAMUV47iLGUgJPl-tW7qFhKNKm6Eg0HYjREW6aHqmk2nYd7LiS-5pndAoPD5NWbjS2IYDyTu-RF6col9KdzAXC5-6mgrM-wyhu6YcYE09mwMlJlUL_VniM3iVKE8bIlobrWW9mPWvUV4sUWvYB84n2SVUL_SqJaTV8RLVF2W2NSXvHDUaHNxfR481zET3WKAH5j1cQBCEmtVtoMGPIVQ';
 
   public function fetchAPIData($endPoint) { 
     $dataURL = $this->apiURL.$endPoint;
@@ -46,12 +47,27 @@ class Controller extends BaseController {
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post); // Set the posted fields
     // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // This will follow any redirects
     $contents = curl_exec($ch); // Execute the cURL statement
+    // exit;
     if ($contents === false) {
-      echo 'Curl error: ' . curl_error($ch);
-    } else {
-      $data = array("success"=>true, "Message"=>"Successfull");
+      $error = 'Curl error: ' . curl_error($ch);
+      Log::error($error);
+    } else { 
+      if ($contents) {
+        $info = curl_getinfo($ch);
+        $data = json_decode(json_encode($contents), true);
+        json_decode($contents);
+        // $this->pr($data);
+        if ($info && $info['http_code'] > 299) {
+          $info = 'Api Returns Error'.serialize($contents);
+          Log::info($info);
+        }
+        // $data = json_decode($contents);
+      } else {
+        $data = array("success"=>true, "Message"=>"Successfull");
+      }
     }
-    // echo 'came here'.$data = json_decode($contents);
+    // echo 'came here'.$this->pr($data);
+    // exit;
     curl_close($ch);
     return $data;
   }
