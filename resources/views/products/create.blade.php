@@ -62,6 +62,11 @@
                         placeholder="Enter Supplier/RC Holder Name" name="SupplierName" value="">
                   </div>
                   <div class="col-lg-6 form-group">
+                    <label for="">Marketed By</label>
+                    <input type="text" class="form-control" id="MarketedBy"
+                        placeholder="Enter Marketed By" name="MarketedBy">
+                  </div>
+                  <div class="col-lg-6 form-group">
                     <label for="">Product Name</label>
                     <input type="text" class="form-control" id="ProductName"
                         placeholder="Enter Product Name" name="ProductName">
@@ -89,6 +94,14 @@
                         <option value="{{ $subcategory->SubCategoryID }}">{{ $subcategory->SubCategoryName }}</option>
                         @endforeach
                         @endif
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 form-group">
+                    <label for="">Item Name</label>
+                    <div id='jsItemContainer'>
+                      <select name="ItemID" class="form-control" id="ItemID">
+                        <option value="">Choose Item</option>
                       </select>
                     </div>
                   </div>
@@ -153,6 +166,21 @@
         },
         success: function(data, textStatus, jqXHR) {
           $('#jsSubCatContainer').html(data);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+        }
+      });
+    })
+    $('#jsApplicationID').change(function() {
+      var applicationID = $(this).val();
+      $.ajax({
+        url: '/get-product-items',
+        type: "GET",
+        data: {
+          applicationID: applicationID,
+        },
+        success: function(data, textStatus, jqXHR) {
+          $('#jsItemContainer').html(data);
         },
         error: function(jqXHR, textStatus, errorThrown) {
         }
