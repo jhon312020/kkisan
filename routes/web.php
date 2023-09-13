@@ -104,6 +104,7 @@ Route::get('/get-srelated-data',[SecondaryController::class, 'getSRelatedData'])
 Route::get('/secondaries/index',[SecondaryController::class, 'index'])->name('secondaries.index');
 Route::get('/secondaries/create',[SecondaryController::class, 'create'])->name('secondaries.create');
 Route::post('secondaries/store',[SecondaryController::class, 'store'])->name('secondaries.store');
+Route::get('/secondaries/view/{id}', [SecondaryController::class, 'view'])->name('secondaries.view');
 
 });
 

@@ -23,7 +23,7 @@
                       <select name="labelid" id="labelid" class="form-control">
                         <option value="">Choose Product with Batch Number</option>
                         @foreach ($primaries as $primary)
-                          <option value="{{ $primary->Product->id }}">{{ $primary->Product->ProductName }} ({{ $primary->BatchNumber }}) ({{ date('d-M-Y h:i:s a', strtotime($primary->created_at)) }})</option>
+                          <option value="{{ $primary->id }}">{{ $primary->Product->ProductName }} ({{ $primary->BatchNumber }}) ({{ date('d-M-Y h:i:s a', strtotime($primary->created_at)) }})</option>
                         @endforeach
                       </select>
                     </div>
@@ -51,20 +51,24 @@
   $(document).ready(function() {
     $('#labelid').change(function() {
       var id = $(this).val();
-      $.ajax({
-        url: '/get-srelated-data',
-        type: "GET",
-        data: {
-          id: id,
-        },
-        success: function(data, textStatus, jqXHR) {
-          if (data) {
-            $('#quantity').val(data[0]['quantity']);
-          } 
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-        }
-      });
+        if (id != "") {
+        $.ajax({
+          url: '/get-srelated-data',
+          type: "GET",
+          data: {
+            id: id,
+          },
+          success: function(data, textStatus, jqXHR) {
+            if (data != "") {
+              $('#quantity').val(data);
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+          }
+        });
+      } else {
+        $('#quantity').empty();
+      }
     })
   })
 </script>

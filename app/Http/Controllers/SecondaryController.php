@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\App;
 class SecondaryController extends Controller {
   public function index() {
     $secondaries = SecondaryLabel::paginate(10);
+    // dd($secondaries);
     return view('secondaries.index',['secondaries' => $secondaries]);
   }
 
@@ -28,9 +29,8 @@ class SecondaryController extends Controller {
 
   public function getSRelatedData(Request $request) {
     $productCode = $request->input('id');
-    $relatedData = PrimaryLabel::where('id', $productCode)
-                ->select('quantity')
-                ->get();
+    $relatedDataSecondary = PrimaryLabel::where('id', $productCode)->first();
+    $relatedData = $relatedDataSecondary->quantity;
     return response()->json($relatedData);
   }
 
@@ -41,11 +41,13 @@ class SecondaryController extends Controller {
     $lastGeneratedQRCode = SecondaryLabel::max('Secondary_QRCode')??0;
     $newSecondaryQRCode = $lastGeneratedQRCode + 1;
     $SecondaryQRCode = '002300' . str_pad($newSecondaryQRCode, 4, '0', STR_PAD_LEFT);
-    $product = Product::find($request->labelid)->first();
-    $primary = PrimaryLabel::where('ProductCode', $product->id)->first();
+    $primary = PrimaryLabel::where('id', $request->labelid)->first();
+    $product = Product::find($primary->Product->id)->first();
+    //$primary = PrimaryLabel::where('ProductCode', $product->id)->first();
     $Totalquantity = $request->quantity;
     $requriedquantity = $request->label_numbers;
-    $divisionResult = $Totalquantity / $requriedquantity;
+    $divisionResult = intval($Totalquantity / $requriedquantity);
+    //dd($divisionResult);
     $validator = Validator::make($request->all(),[
       'labelid' => ['required'],
       'quantity' => ['required', 'integer'],
@@ -56,10 +58,10 @@ class SecondaryController extends Controller {
       $secondaries->SecondaryContainerCode = $SecondaryCode;
       $secondaries->Secondary_quantity = $request->label_numbers;
       $secondaries->Secondary_QRCode = $SecondaryQRCode;
-      $secondaries->ProductCode = $request->labelid;
+      $secondaries->ProductCode = $product->id;
       $secondaries->primary_label = $primary->id;
-      $secondaries->SerialNumber = $request->secondary_name;
-      $secondaries->QRCode = $request->brand_name;
+      $secondaries->SerialNumber = $primary->SerialNumber;
+      $secondaries->QRCode = $primary->QRCode;
       $secondaries->label_type = $primary->label_type;
       $secondaries->save();
       Alert::success('Congrats', 'Secondary Successfully Added');

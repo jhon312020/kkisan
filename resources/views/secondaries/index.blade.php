@@ -21,7 +21,6 @@
           <table id="myTable" class="table table-striped table-fixed">
             <thead>
               <tr>
-                <th>S.NO.</th>
                 <th>Secondary ID</th>
                 <th>Secondary QR Code</th>
                 <th>Primary QR Code</th>
@@ -36,7 +35,19 @@
               @if ($secondaries->isNotEmpty())
               @foreach ($secondaries as $secondary)
               <tr valign="middle">
-                <td>{{ $secondary->company_name}}</td>
+                <td>{{ $secondary->SecondaryContainerCode}}</td>
+                <td>QR Code: {{ $secondary->Secondary_QRCode}}<br>labels-Range :{{$secondary["SerialNumber"]}}</td>
+                <td>
+                <ul>
+                    @foreach (json_decode($secondary->QRCode) as $code)
+                      {{ $code }}<br>
+                    @endforeach
+                </ul>
+                </td>
+                <td>{{ $secondary->Product->ProductCode}}</td>
+                <td>{{ $secondary->Product->ProductName}}</td>
+                <td>{{ $secondary->Product->SupplierName}}<br>{{ $secondary->PrimaryLabel->BatchNumber}}</td>
+                <td>{{ $secondary->LabelType->name}}</td>
                 <td>
                   <a href="{{ route('secondaries.view', $secondary->id) }}" class="btn btn-primary btn-sm">View</a>
                 </td>
