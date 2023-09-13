@@ -20,7 +20,7 @@
         <div class="card-body">
           <form id="target" action="/delete-products" method="POST">
             @csrf
-            <table id="myTable" class="table table-striped" style="width:100%"> 
+            <table id="tableContent" class="table table-striped" style="width:100%"> 
               <thead>
                 <tr>
                   <th>Company Name</th>
@@ -83,9 +83,10 @@
 </div>
 <script>
   $(document).ready(function() {
-    $('#myTable').DataTable( {
+    $('#tableContent').DataTable( {
       responsive: true,
       fixedHeader: true,
+      responsive: true,
       dom: 'Bfrtip',
       columnDefs: [
         {

@@ -12,7 +12,7 @@ class Controller extends BaseController {
   public $apiURL = "https://kkisan.karnataka.gov.in/KKISANQRAPI/api/";
   public $userName = "sadukthi@gmail.com";
   public $password = '$Adukthi@432!';
-  public $accessToken = 'nhE_ic8dQ40btK2TfoFP20AmcEs8-_rU0symrnZ4ECy19i6MnQ5lakTqt8KeiQJyvMlnzQavYxdonnlzk28hsvvrASgpAvdtoQxwPd3pS23KAcC2KySIXAqFM7C9Dd-dXYtxxMoolrKMAbHHS5zzofd-76fMWFPeWk7aM91G7YIVMNHgNxXzlNz1Bvm-DJHnqf1Y1NQi4q9H8ks3NOEAoPBTNzi7dj54UwtBdU6GyZa8pjtPVfvpChN67sGluZBE41uE51hImaWM5hDpMTVErVFu_i0D2YNljMXWuoAB1SrmJKWS3RLB4CbLCfoXFokIHFDAMUV47iLGUgJPl-tW7qFhKNKm6Eg0HYjREW6aHqmk2nYd7LiS-5pndAoPD5NWbjS2IYDyTu-RF6col9KdzAXC5-6mgrM-wyhu6YcYE09mwMlJlUL_VniM3iVKE8bIlobrWW9mPWvUV4sUWvYB84n2SVUL_SqJaTV8RLVF2W2NSXvHDUaHNxfR481zET3WKAH5j1cQBCEmtVtoMGPIVQ';
+  public $accessToken = 'LtcWtTXgdWGggb8cXA4oSvM6nraC4Azh54BzlJ1IKow1AQebkZtmms7GDK16ULPib4Q9Ua8gcoeniBbW5BqWxMtA0Cih_dwZo067XWJ8FG3ilAEQBTaed4WdVMnvc1AXS1eAyDp6ivsor-lnNefhdplvyFAxs22F0TR4w5y-rcqA1LZE4qfNJjPQ8u-SUAk3ow2ANI_Pk_yTnW02JGDMg6cug18zumkF-INj2YXqvWf-RZVB5O091xxqerGFSyHMdTRi3zlLqZOrvRfNB84Mo3wHzEUslP-h2hFXkdxIi8bUAZc66XCOstWrVgH2M3T6rM1TtEHjgqYClN6JybA76UdmQV_vzi_ATr_D1gJi_ULdwceUsLAPY7HX1mnX275xvCS_5d_czyJ2h1vWWthlRtjKJlETgErXN8sUen7COyBNv3bxiTHXRHX2oyCD34mXWpsS8Zl_kk8mq5lsPSXlvc9Is0fAo9zevYu3kMyD0Aqz6SErZqhLb56pFEUjWtSWD0DzZPzVNVnt9r-3Ha30ZA';
 
   public function fetchAPIData($endPoint) { 
     $dataURL = $this->apiURL.$endPoint;
@@ -39,7 +39,7 @@ class Controller extends BaseController {
     $dataURL = $this->apiURL.$endPoint;
     $ch = curl_init($dataURL); // Initialise cURL
     $post = json_encode($postData); // Encode the data array into a JSON string
-    // $this->pr($post);
+    $this->pr($post);
     $authorization = "Authorization: Bearer ".$token; // Prepare the authorisation token
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization )); // Inject the token into the header
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

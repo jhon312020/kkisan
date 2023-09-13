@@ -23,7 +23,7 @@
                     <select name="product_id" id="productid" class="form-control">
                         <option value="">Choose Product</option>
                         @foreach ($products as $product)
-                          <option value="{{ $product->id }}">{{ $product->ProductName }}({{ date('d-M-Y h:i:s a', strtotime($product->created_at)) }})</option>
+                          <option value="{{ $product->ProductCode }}">{{ $product->ProductName }}({{ date('d-M-Y h:i:s a', strtotime($product->created_at)) }})</option>
                         }
                         }
                         @endforeach
@@ -125,13 +125,11 @@
         dangerMode: true,
         timer: 10000
       });
-      // $(this).val('');
       $("#exp_date").val(new Date());
     }
   }
   $(document).ready(function() {
     $('#productid').change(function() {
-      console.log("hi");
       var id = $(this).val();
       $.ajax({
         url: '/get-related-data',
@@ -165,59 +163,7 @@
 
 
 
-  $("#btnCakePrice").bind("click", function() {
-    var div = $("<div />");
-    div.html(GetDynamicWeight(""));
-    $("#WeightContainer").append(div);
-  });
-  $("body").on("click", ".removeGrossBtn", function() {
-    $(this).closest(".dynamicRadio").remove();
-  });
-
-        function GetDynamicWeight(value) {
-            return `<div class="dynamicRadio"> <div class="row"> <div class="col-lg-4 form-group"><label for="">Tare Weight</label><input type="text" class="form-control" id="" placeholder="Enter Tare Weight" name="tear_Weight[]"></div>
-            <div class="col-lg-4 form-group"><label for="">Net Weight</label><input type="text" class="form-control" id="" placeholder="Enter Net Weight" name="net_Weight[]"></div>
-            <div class="col-lg-4 form-group"><label for="">Remove</label><button style="border: none;" class="form-control text-danger removeGrossBtn" id=""><i class="fa fa-minus"></i></button></div></div></div> `
-        }
-        $(() => {
-
-            // --- Fz for product api --- //
-            $('#type').on('change', function() {
-                let val = $(this).val();
-                let url = "/get-related-data";
-                let fullUrl = `${url}/${val}`;
-                $.get(fullUrl, (data, status) => {
-                    console.log(data);
-                    if (data['status']) {
-                        $("select[name='product_id']").empty();
-                        $("select[name='product_id']").append(
-                            `<option disabled selected>Select Product Name</option>`);
-
-                        data['data'].forEach(element => {
-
-                            $("select[name='product_id']").append(`
-
-                <option value="${element.id}">${element.name}</option>`)
-
-                        });
-
-                    }
-                })
-            })
-
-            $("select[name='product_id']").on('change', function() {
-
-                let val = $(this).val();
-                let url = "/get-related-data";
-                let fullUrl = `${url}/${val}`;
-                $.get(fullUrl, (data, status) => {
-                    if (data['status']) {
-                        $("#lic_no").val(data['data']['licence_no']);
-                        $("#phermacopeia_ref_no").val(data['data']['phermacopeia_ref']);
-                    }
-                })
-            })
-          });
+  
             // --- Fz for product api --- //
 </script>
 @endsection

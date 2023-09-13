@@ -20,7 +20,7 @@
         <div class="card-body">
           <form id="target" action="/delete-primaries" method="POST">
             @csrf
-            <table id="myTable" class="table table-striped">
+            <table id="tableContent" class="table table-striped">
               <thead>
                 <tr>
                   <th>Label Created Date</th>
@@ -71,4 +71,38 @@
     </div>
   </div>
 </div>
+<script type='text/javascript'>
+  $(document).ready(function() {
+    $('#tableContent').DataTable( {
+      responsive: true,
+      fixedHeader: true,
+      responsive: true,
+      dom: 'Bfrtip',
+      columnDefs: [
+        {
+          targets: 1,
+          className: 'noVis'
+        }
+      ],
+      buttons: [
+        {
+          extend: 'colvis',
+          className: 'btn-primary',
+          columns: ':not(.noVis)'
+        },
+        'copy', 'excel', 'pdf'
+      ]
+    });
+    $('#selectAll').click(function() {
+      $('.dynamicCheckbox').prop('checked', $(this).prop('checked'));
+    });
+    $('.dynamicCheckbox').click(function() {
+      if ($('.dynamicCheckbox:checked').length === $('.dynamicCheckbox').length) {
+        $('#selectAll').prop('checked', true);
+      } else {
+        $('#selectAll').prop('checked', false);
+      }
+    });
+  });
+</script>
 @endsection

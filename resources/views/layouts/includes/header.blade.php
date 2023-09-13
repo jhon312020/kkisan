@@ -80,7 +80,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <style>
+    <style type='text/css'>
       /*Code to change color of active link*/
       .navbar-nav > .active > a {
           color: red; !important;
@@ -108,6 +108,19 @@
       }
       .nav-pills .nav-link:not(.active):hover {
         color: #e91e63;
+      }
+/*      #tableContent_wrapper .dt-buttons button.dt-button, div.dt-button, a.dt-button, input.dt-button {*/
+      #tableContent_wrapper .dt-buttons > button {
+        border-radius: 2px;
+        color: white;
+        background-color: #e91e63;
+      }
+
+      #tableContent_wrapper .dt-buttons button.dt-button:hover:not(.disabled), div.dt-button:hover:not(.disabled), a.dt-button:hover:not(.disabled), input.dt-button:hover:not(.disabled) {
+        box-shadow: 0 14px 26px -12px rgba(233,30,99,.42), 0 4px 23px 0 rgba(0,0,0,.12), 0 8px 10px -5px rgba(233,30,99,.2);
+        border: 1px solid #b8124a;
+        background-color: #e91e63;
+        color: white;
       }
     </style>
      <!-- @vite(['resources/css/app.css', 'resources/js/app.js']); -->

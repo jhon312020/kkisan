@@ -19,13 +19,12 @@ use Excel;
 use App\Exports\YourExcelExport;
 
 class ProductController extends Controller {
-  public function index() {
+  public function index(Request $request) {
     $products = Product::paginate(10);
     return view('products.index',['products' => $products]);
   }
 
   public function create() {
-    // $this->postDatatoAPI();
     $guoms = UnitOfMeasurement::where('local_status',1)->get();
     $applications = Application::where('local_status',1)->get();
     $categories = Category::where('local_status',1)->get();
@@ -35,12 +34,12 @@ class ProductController extends Controller {
   }
 
   public function store(Request $request) {
-    // $this->pr($request->all());
     $lastGeneratedCode = Product::max('id')??0;
     $newProductCode = $lastGeneratedCode + 1;
-    $portalID = '23';
-    $vendorID = '99';
-    $productCode = '0000'.$portalID.$vendorID . str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
+    $portalID = config('constant.PORTAL_ID');
+    $prependProCode = config('constant.PREPEND_PRODUCT_CODE');
+    $vendorID = Auth::user()->UserProfile->vendor_id;
+    $productCode = $prependProCode.$portalID.$vendorID . str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
     // exit;
     $validator = Validator::make($request->all(),[
       'is_secondary' => ['required'],
@@ -73,15 +72,13 @@ class ProductController extends Controller {
       $product->ItemID = $request->ItemID;
       if ($product->save()) {
         $categories = Category::where('ApplicationID', $product->ApplicationID)
-          ->where('local_status',1)
+          ->where('local_status', 1)
           ->where('ItemCategoryID', $product->ItemCategoryID)
           ->pluck('ItemCategoryName', 'ItemCategoryID');
-          // $this->pr($categories);
         $subCategories = SubCategory::where('ApplicationID', $product->ApplicationID)
-        ->where('local_status',1)
+        ->where('local_status', 1)
         ->where('SubCategoryID', $product->SubCategoryID)
         ->pluck('SubCategoryName', 'SubCategoryID');
-        // $this->pr($subCategories);
         $productData = array(
           "ApplicationID"=> $product->ApplicationID,
           "ProductCode"=> $product->ProductCode,
@@ -94,7 +91,7 @@ class ProductController extends Controller {
           "CategoryName"=> $categories[$product->ItemCategoryID],
           "SubCategoryID"=> $product->SubCategoryID,
           "SubCategoryName"=> $subCategories[$product->SubCategoryID] ,
-          "ItemID"=> $product->ItemID?$product->ItemID:0,
+          "ItemID"=> $product->ItemID? $product->ItemID: 0,
           "ProductName"=> $product->ProductName,
           "BrandName"=> $product->BrandName,
           "UomID"=> $product->UomID,
@@ -202,7 +199,7 @@ class ProductController extends Controller {
     return view('products.getProductItems', ['items'=>$items]);
   }
 
-   public function excelView(Request $request) {
+  public function excelView(Request $request) {
     $products = Product::paginate(10);
     return view('products.excelView',['products'=>$products]);
   }
