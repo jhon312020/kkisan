@@ -12,7 +12,7 @@ class Controller extends BaseController {
   public $apiURL = "https://kkisan.karnataka.gov.in/KKISANQRAPI/api/";
   public $userName = "sadukthi@gmail.com";
   public $password = '$Adukthi@432!';
-  public $accessToken = 'LtcWtTXgdWGggb8cXA4oSvM6nraC4Azh54BzlJ1IKow1AQebkZtmms7GDK16ULPib4Q9Ua8gcoeniBbW5BqWxMtA0Cih_dwZo067XWJ8FG3ilAEQBTaed4WdVMnvc1AXS1eAyDp6ivsor-lnNefhdplvyFAxs22F0TR4w5y-rcqA1LZE4qfNJjPQ8u-SUAk3ow2ANI_Pk_yTnW02JGDMg6cug18zumkF-INj2YXqvWf-RZVB5O091xxqerGFSyHMdTRi3zlLqZOrvRfNB84Mo3wHzEUslP-h2hFXkdxIi8bUAZc66XCOstWrVgH2M3T6rM1TtEHjgqYClN6JybA76UdmQV_vzi_ATr_D1gJi_ULdwceUsLAPY7HX1mnX275xvCS_5d_czyJ2h1vWWthlRtjKJlETgErXN8sUen7COyBNv3bxiTHXRHX2oyCD34mXWpsS8Zl_kk8mq5lsPSXlvc9Is0fAo9zevYu3kMyD0Aqz6SErZqhLb56pFEUjWtSWD0DzZPzVNVnt9r-3Ha30ZA';
+  public $accessToken = 'A88Rbf3ISucv_jaz2B8XUHklkc08nQBGyYZjZUKE2vsnucOOEd4Rhw3HqPmRX2vnmwSNy1D9XxyCkWYhJ52lm0E1x9KQCFFZh8--GQnO8su84inwvJTyaoPG8sJn0RQwzJRboFawNggPe5gdWHW_PX4aaCfOdxn3ydROJ6B2vtAzSQHsnd7dx6KXaudhoHRVx7smUa0OCYuC6AunZXCFX6UTLvmzMoo2sEebcmYCXAICCZ8blSN-hbOmnhzJz9yMDcF-L-cGjZE-dj3PT4lNz2efzatpCTUxcdWiXxocgonnMLKjzpH7LJPPkMO4Q_-1GVtmE5_Kt3Szaj2wvK8vbO2zha-0xSP0_1UZb5f-3Y9w-8f6cnu8TQET-DOh5cffNbkd_c0qkQ7um7_MBkpYwTW4WKXgFctydat0OI1blYkh1X4IeGRso-eavWAwWMMIBvxfoCvEQM3QxttBkJiWDoxQJnWrlAsyMWFeb0TI7DKmCe3dlXI6jchGKvAFT_RhicKVBVteQapvgHneQf0cqw';
 
   public function fetchAPIData($endPoint) { 
     $dataURL = $this->apiURL.$endPoint;
@@ -34,12 +34,26 @@ class Controller extends BaseController {
     echo '</pre>';
   }
 
+  public function getPrependCode($codeType='') {
+    $prependProCode = config('constant.PREPEND_PRODUCT_CODE');
+    $portalID = config('constant.PORTAL_ID');
+    $vendorID = Auth::user()->UserProfile->vendor_id;
+    $prependCode = '';
+    switch($codeType) {
+      case 'product':
+        $prependCode = $prependProCode;
+      break;
+    }
+    $prependCode .= $portalID.$vendorID;
+    return $prependCode;
+  }
+
   public function postDatatoAPI($endPoint, $postData, $token) {
     header('Content-Type: application/json'); // Specify the type of data
     $dataURL = $this->apiURL.$endPoint;
     $ch = curl_init($dataURL); // Initialise cURL
     $post = json_encode($postData); // Encode the data array into a JSON string
-    $this->pr($post);
+    // $this->pr($post);
     $authorization = "Authorization: Bearer ".$token; // Prepare the authorisation token
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization )); // Inject the token into the header
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

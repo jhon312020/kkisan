@@ -18,7 +18,7 @@
       <div class="card">
         <div class="card-header">{{ __('Secondary List') }}  <a href="{{ route('secondaries.create') }}" style="position: absolute;right: 10px;" class="btn btn-primary btn-sm"><i class="material-icons" style="font-size:15px">&#xe39d;</i>Add Secondary</a></div>
         <div class="card-body">
-          <table id="myTable" class="table table-striped table-fixed">
+          <table id="tableContent" class="table table-striped table-fixed">
             <thead>
               <tr>
                 <th>Secondary ID</th>
@@ -53,10 +53,6 @@
                 </td>
               </tr>
               @endforeach
-              @else
-              <tr>
-                <td colspan="9" >Record Not Found</td>
-              </tr>
               @endif
             </tbody>
           </table>
@@ -70,6 +66,28 @@
 </div>
 <script>
   $(document).ready(function() {
+    $('#tableContent').DataTable( {
+      fixedHeader: true,
+      scrollX: true,
+      dom: 'Bfrtip',
+      language: {
+        emptyTable: "Currently no data available in table"
+      },
+      columnDefs: [
+        {
+          targets: 1,
+          className: 'noVis'
+        }
+      ],
+      buttons: [
+        {
+          extend: 'colvis',
+          className: 'btn-primary',
+          columns: ':not(.noVis)'
+        },
+        'copy', 'excel', 'pdf'
+      ]
+    });
     $('#selectAll').click(function() {
       $('.dynamicCheckbox').prop('checked', $(this).prop('checked'));
     });

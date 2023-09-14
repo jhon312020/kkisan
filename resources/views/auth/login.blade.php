@@ -57,7 +57,7 @@
                           <center>
                             <div class="col-md-7">
                         
-                                <button type="submit" class="btn btn-primary" style="font-size: 16px;font-weight: 600;background-color: #000080;width: 100%;">
+                                <button type="submit" class="btn btn-primary" style="font-size: 16px;font-weight: 600;width: 100%;">
                                     {{ __('Login') }}
                                 </button>
                               

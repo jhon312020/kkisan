@@ -196,38 +196,68 @@ class PrimaryController extends Controller {
     return view('primaries.printLabel',['primary'=>$primary]);  
   }
 
-  public function primaryprint($id) { 
+  public function primaryprint(Request $request, $id) { 
+    // $this->pr($request->all());
     $primary = PrimaryLabel::find($id);
-    if ($primary->LabelType->name == 'small') {
-        $qrcodes = json_decode($primary->QRCode);
-        $qrCodesArray = [];
-        $counter = 0;
-        foreach ($qrcodes as $value) {
-          // foreach ($subArray as $value) {
-            $qrCodeValue = "01" . str_pad($value, 10, '0', STR_PAD_LEFT);
-            $filePath = public_path("qrcodes");
-            // contiune;
-            $fileName = "qrcode_$counter.svg";
-            $filefullPath = $filePath.DIRECTORY_SEPARATOR.$fileName;
-            // $qrCode = QrCode::generate("$qrCodeValue", $filefullPath);
-            // $qrCode = QrCode::format('png')->generate("$qrCodeValue", $filefullPath);
-            $qrCodesArray[] = [
-              'qrCode' => $filefullPath,
-              'value' => $qrCodeValue,
-            ];            
-            // file_put_contents($filePath, $qrCode);
-            $counter++;
-          // }
-        }
-        // return view('primaries.pdf',['primary'=>$primary, 'qrCodesArray'=>$qrCodesArray]); 
-
-        $this->pr($qrCodesArray);
-        exit;
-        $pdf = PDF::loadView('primaries.pdf', [
-          'qrCodesArray' => $qrCodesArray,
-          'primary' => $primary,
-        ]);
-        return $pdf->download('primaries.pdf');
+    $totalQuantity = $primary->quantity;
+    // exit;
+    $validator = Validator::make($request->all(),[
+      'from' => 'required|numeric|min:1|max:'.$totalQuantity,
+      'to' => 'required|integer|gte:from|max:'.$totalQuantity,     
+    ]);
+    if ($validator->passes()) {
+      $labelFrom = $request->from;
+      $labelTo = $request->to;
+      $qrCodes = json_decode($primary->QRCode);
+      $qrCodesArray = $this->generateQrCodes($qrCodes, $labelFrom, $labelTo);
+      switch($primary->LabelType->name) {
+        case 'green':
+          $paperSize = array(0, 0, 283, 425);
+        break;
+        case 'white':
+          $paperSize = array(0, 0, 283, 425);
+        break;
+        case 'medium':
+          $paperSize = array(0, 0, 171, 227);
+        break;
+        default:
+          $paperSize = array(0, 0, 140, 142);
+          // $paperSize = array(0,0,311.88,311.88);
+        break;
+      }
+      $pdf = PDF::loadView('primaries.pdf', [
+        'qrCodesArray' => $qrCodesArray,
+        'primary' => $primary,
+      ]);
+      $pdf->setPaper($paperSize, 'landscape');
+      return $pdf->download('primaries.pdf');
+    } else {
+      Alert::error('Error', 'Some Error Occurred');
+      // $this->pr($validator->errors());
+      // exit;
+      return redirect()->route('primaries.printLabel',$id)->withErrors($validator)->withInput();
     }
+  }
+
+  public function generateQrCodes($qrCodes, $labelFrom, $labelTo) {
+    $qrCodesArray = [];
+    $counter = 0;
+    $labelFrom--;
+    for ($counter = $labelFrom; $counter<$labelTo; $counter++) {
+      $value = $qrCodes[$counter];
+      $qrCodeValue = "01" . str_pad($value, 10, '0', STR_PAD_LEFT);
+      $filePath = public_path("qrcodes");
+      // contiune;
+      $fileName = "qrcode_$counter.svg";
+      $filefullPath = $filePath.DIRECTORY_SEPARATOR.$fileName;
+      $qrCode = QrCode::generate("$qrCodeValue", $filefullPath);
+      // $qrCode = QrCode::format('png')->generate("$qrCodeValue", $filefullPath);
+      $qrCodesArray[] = [
+        'qrCode' => $filefullPath,
+        'value' => $qrCodeValue,
+      ];            
+      // file_put_contents($filePath, $qrCode);
+    }
+    return $qrCodesArray;
   }
 }

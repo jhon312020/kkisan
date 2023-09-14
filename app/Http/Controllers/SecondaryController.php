@@ -21,39 +21,60 @@ class SecondaryController extends Controller {
   }
 
   public function create() {
-    $products = Product::where('is_secondary',1)->get();
-    $productIds = $products->pluck('id')->toArray();
-    $primaries = PrimaryLabel::whereIn('ProductCode',$productIds)->get();
+    $products = Product::select('ProductCode')->where('is_secondary', 1)->where('local_status', 1)->get();
+    // $this->pr($products->toArray());
+    // exit;
+    $productCodes = $products->pluck('ProductCode')->toArray();
+    //$this->pr($productIds);
+    $primaries = PrimaryLabel::whereIn('ProductCode',$productCodes)->where('local_status', 1)->get();
+    // $this->pr($primaries);
+    // exit;
     return view('secondaries.create', compact('products','primaries'));
   }
 
   public function getSRelatedData(Request $request) {
-    $productCode = $request->input('id');
-    $relatedDataSecondary = PrimaryLabel::where('id', $productCode)->first();
+    $recordID = $request->input('id');
+    $relatedDataSecondary = PrimaryLabel::where('id', $recordID)->first();
     $relatedData = $relatedDataSecondary->quantity;
     return response()->json($relatedData);
   }
 
   public function store(Request $request) {
-    $lastGeneratedCode = SecondaryLabel::max('id')??0;
-    $newSecondaryCode = $lastGeneratedCode + 1;
-    $SecondaryCode = '00002300' . str_pad($newSecondaryCode, 12, '0', STR_PAD_LEFT);
-    $lastGeneratedQRCode = SecondaryLabel::max('Secondary_QRCode')??0;
-    $newSecondaryQRCode = $lastGeneratedQRCode + 1;
-    $SecondaryQRCode = '002300' . str_pad($newSecondaryQRCode, 4, '0', STR_PAD_LEFT);
-    $primary = PrimaryLabel::where('id', $request->labelid)->first();
-    $product = Product::find($primary->Product->id)->first();
-    //$primary = PrimaryLabel::where('ProductCode', $product->id)->first();
-    $Totalquantity = $request->quantity;
-    $requriedquantity = $request->label_numbers;
-    $divisionResult = intval($Totalquantity / $requriedquantity);
-    //dd($divisionResult);
+    $totalPrimaryLabels = $request->quantity;
+    $this->pr($request->all());
     $validator = Validator::make($request->all(),[
-      'labelid' => ['required'],
-      'quantity' => ['required', 'integer'],
-      'label_numbers' => ['required', 'integer', 'max:20', 'min:5'],
+      'labelid' => 'required',
+      'quantity' => 'required|numeric',
+      'label_numbers' => 'required|numeric|min:1|max:'.$totalPrimaryLabels,     
     ]);
+    exit;
     if ($validator->passes()) {
+      $totalSecQty = $request->label_numbers;
+      $totalSecRecords = intval($totalPrimaryLabels / $totalSecQty);
+      $primaryRecord = PrimaryLabel::sum('quantity') ?? 0;  
+      $secondaryRecord = SecondaryLabel::sum('primary_quantity') ?? 0;  
+      $lastRecord = $primaryRecord + $secondaryRecord
+      $primary = PrimaryLabel::where('id', $request->labelid)->first();
+      $product = Product::find($primary->Product->id)->first();
+      for ($counter=0; $counter<$totalSecRecords; $counter++) {
+        $lastRecord++;
+        $prependCode = $this->getPrependCode();
+        $qrCode = '2300' . str_pad($lastRecord, 6, '0', STR_PAD_LEFT);
+        $secondaryRecords[] = array (
+          "QRCode"=> $qrCode,
+          "SecondaryContainerCode"=> "",
+          "SecondaryLabelDetail"=> array (
+            "QRCode"=> $primary->QRCode,
+            "ProductCode"=> $product->ProductCode,
+            "BatchNumber"=> $primary->BatchNumber,
+            "SerialNumber"=> $primary->SerialNumber,
+            "ManufactureDate"=> $primary->BatchNumber,
+            "ExpiryDate"=> $primary->ExpiryDate  
+          )
+        );
+      }
+
+      exit;
       $secondaries = new SecondaryLabel();
       $secondaries->SecondaryContainerCode = $SecondaryCode;
       $secondaries->Secondary_quantity = $request->label_numbers;
@@ -63,7 +84,9 @@ class SecondaryController extends Controller {
       $secondaries->SerialNumber = $primary->SerialNumber;
       $secondaries->QRCode = $primary->QRCode;
       $secondaries->label_type = $primary->label_type;
-      $secondaries->save();
+      $this->pr($secondaries);
+      // exit;
+      // $secondaries->save();
       Alert::success('Congrats', 'Secondary Successfully Added');
       return redirect()->back();
     } else {
@@ -134,5 +157,27 @@ class SecondaryController extends Controller {
     SecondaryLabel::whereIn('id', $ids)->delete();
     Alert::success('Success', 'Secondary Deleted Successfully');
     return redirect()->back();
-  }  
+  } 
+
+  public function formPrimaryQRArray($qrCodes, $labelFrom, $labelTo) {
+    $qrCodesArray = [];
+    $counter = 0;
+    $labelFrom--;
+    for ($counter = $labelFrom; $counter<$labelTo; $counter++) {
+      $value = $qrCodes[$counter];
+      $qrCodeValue = "01" . str_pad($value, 10, '0', STR_PAD_LEFT);
+      $filePath = public_path("qrcodes");
+      // contiune;
+      $fileName = "qrcode_$counter.svg";
+      $filefullPath = $filePath.DIRECTORY_SEPARATOR.$fileName;
+      $qrCode = QrCode::generate("$qrCodeValue", $filefullPath);
+      // $qrCode = QrCode::format('png')->generate("$qrCodeValue", $filefullPath);
+      $qrCodesArray[] = [
+        'qrCode' => $filefullPath,
+        'value' => $qrCodeValue,
+      ];            
+      // file_put_contents($filePath, $qrCode);
+    }
+    return $qrCodesArray;
+  } 
 }

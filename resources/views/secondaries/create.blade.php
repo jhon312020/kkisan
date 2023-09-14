@@ -35,7 +35,7 @@
                     <div class="col-lg-6 form-group">
                       <label for="">Required No. of Primary Labels in One Secondary </label>
                       <input type="text" class="form-control" id=""
-                            placeholder="Enter Quantity" name="label_numbers" min="5" max="20">
+                            placeholder="Enter Quantity" name="label_numbers">
                     </div>
                 </div>
               </div>

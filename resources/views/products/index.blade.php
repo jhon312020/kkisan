@@ -65,10 +65,6 @@
                   </td>
                 </tr>
                 @endforeach
-                @else
-                <tr>
-                  <td colspan="13">Record Not Found</td>
-                </tr>
                 @endif
               </tbody>
             </table>
@@ -84,10 +80,12 @@
 <script>
   $(document).ready(function() {
     $('#tableContent').DataTable( {
-      responsive: true,
+      scrollX: true,
       fixedHeader: true,
-      responsive: true,
       dom: 'Bfrtip',
+      language: {
+        emptyTable: "Currently no data available in table"
+      },
       columnDefs: [
         {
           targets: 1,

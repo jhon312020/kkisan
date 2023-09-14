@@ -36,10 +36,8 @@ class ProductController extends Controller {
   public function store(Request $request) {
     $lastGeneratedCode = Product::max('id')??0;
     $newProductCode = $lastGeneratedCode + 1;
-    $portalID = config('constant.PORTAL_ID');
-    $prependProCode = config('constant.PREPEND_PRODUCT_CODE');
-    $vendorID = Auth::user()->UserProfile->vendor_id;
-    $productCode = $prependProCode.$portalID.$vendorID . str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
+    $prependCode = $this->getPrependCode('product');
+    $productCode = $prependCode.str_pad($newProductCode, 6, '0', STR_PAD_LEFT);
     // exit;
     $validator = Validator::make($request->all(),[
       'is_secondary' => ['required'],
