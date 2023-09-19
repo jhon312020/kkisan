@@ -20,7 +20,7 @@ use App\Exports\YourExcelExport;
 
 class ProductController extends Controller {
   public function index(Request $request) {
-    $products = Product::paginate(10);
+    $products = Product::orderBy('id', 'desc')->paginate(10);
     return view('products.index',['products' => $products]);
   }
 

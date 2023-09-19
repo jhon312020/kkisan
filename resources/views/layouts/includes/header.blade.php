@@ -122,6 +122,12 @@
         background-color: #e91e63;
         color: white;
       }
+      .not_synced {
+        background-color: #ce2029 !important;
+      }
+      .not_synced td {
+        color: white;
+      }
     </style>
      <!-- @vite(['resources/css/app.css', 'resources/js/app.js']); -->
   </head>

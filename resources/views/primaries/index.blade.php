@@ -39,7 +39,7 @@
               <tbody>
               @if ($primaries->isNotEmpty())
               @foreach ($primaries as $primary)
-              <tr valign="middle">
+              <tr valign="middle" class="<?php echo $primary->api_sync_status?'synced':'not_synced'?>">
                 <td>{{ date('d-M-Y h:i:s a', strtotime($primary->created_at))}}</td>
                 <td>{{ $primary->Product->ProductName}}</td>
                 <td>{{ $primary->Product->ProductCode}}</td>
@@ -76,6 +76,7 @@
       language: {
         emptyTable: "Currently no data available in table"
       },
+      aaSorting: [],
       columnDefs: [
         {
           targets: 1,

@@ -41,7 +41,7 @@
               <tbody>
                 @if ($products->isNotEmpty())
                 @foreach ($products as $product)
-                <tr valign="middle">
+                <tr valign="middle" class="<?php echo $product->api_sync_status?'synced':'not_synced'?>">
                   <td>{{ $product->company_name}}</td>
                   <td>{{ $product->ProductName}}</td>
                   <td>
@@ -86,6 +86,7 @@
       language: {
         emptyTable: "Currently no data available in table"
       },
+      aaSorting: [],
       columnDefs: [
         {
           targets: 1,

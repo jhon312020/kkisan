@@ -21,35 +21,56 @@
           <table id="tableContent" class="table table-striped table-fixed">
             <thead>
               <tr>
+                <th>S.No.</th>
                 <th>Secondary ID</th>
                 <th>Secondary QR Code</th>
-                <th>Primary QR Code</th>
-                <th>Product Code</th>
-                <th>Product Name</th>
-                <th>Supplier Name & Batch Number</th>
+                <th>Primary QR Codes</th>
+                <th>Product Name & Batch Number</th>
                 <th>Label Type</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
               @if ($secondaries->isNotEmpty())
-              @foreach ($secondaries as $secondary)
-              <tr valign="middle">
-                <td>{{ $secondary->SecondaryContainerCode}}</td>
-                <td>QR Code: {{ $secondary->Secondary_QRCode}}<br>labels-Range :{{$secondary["SerialNumber"]}}</td>
-                <td>
-                <ul>
-                    @foreach (json_decode($secondary->QRCode) as $code)
-                      {{ $code }}<br>
-                    @endforeach
-                </ul>
+              <?php $counter = 1; ?>
+              @foreach ($secondaries as $key=>$secondary)
+              <?php 
+                $secLabelDetails = json_decode($secondary->SecondaryLabelDetail, true);
+                // echo '<pre>';
+                // print_r($secLabelDetails);
+                $QRCodes = array_column($secLabelDetails, 'QRCode');
+                $serialNumbers = array_column($secLabelDetails, 'SerialNumber');
+                $totSerialNums = count($serialNumbers);
+                $labelRange = $serialNumbers[0]."-".$serialNumbers[$totSerialNums-1];
+                // print_r($serialNumbers);
+                // echo '</pre>';
+              ?>
+              <tr valign="middle" class="<?php echo $secondary->api_sync_status?'synced':'not_synced'?>">
+                <td>{{$counter++}}</td>
+                <td>{{ $secondary->SecondaryContainerCode}}
+                <br/> 
+                  <?php echo date('(d-m-Y)', strtotime($secondary->created_at)); ?>
+                  <br/>
+                  <?php echo date('(H:s:i)', strtotime($secondary->created_at)); ?>
                 </td>
-                <td>{{ $secondary->Product->ProductCode}}</td>
-                <td>{{ $secondary->Product->ProductName}}</td>
-                <td>{{ $secondary->Product->SupplierName}}<br>{{ $secondary->PrimaryLabel->BatchNumber}}</td>
+                <td> 
+                  <?php
+                    $filePath = public_path("qrcodes".DIRECTORY_SEPARATOR."secondary".DIRECTORY_SEPARATOR."$secondary->id");
+                    $fileName = $filePath.DIRECTORY_SEPARATOR."qrcode_$secondary->QRCode.svg";
+                    $svg = file_get_contents($fileName);   
+                    echo $html = '<img src="data:image/svg+xml;base64,'.base64_encode($svg). '" width="75" height="75" />'; 
+                  ?>
+                  <br/>
+                  QR Code: {{$secondary->QRCode}}<br/>labels-Range: {{$labelRange}}</td>
+                <td>
+                <?php echo implode('<br/>', $QRCodes);?>
+                </td>
+                <td>{{ $secondary->Product->ProductName}} <br/> {{ $secondary->PrimaryLabel->BatchNumber}}</td>
                 <td>{{ $secondary->LabelType->name}}</td>
                 <td>
                   <a href="{{ route('secondaries.view', $secondary->id) }}" class="btn btn-primary btn-sm">View</a>
+                  <br/><br/>
+                  <a href="{{ route('secondaryPrint', $secondary->id) }}" class="btn btn-primary btn-sm">Print Label</a>
                 </td>
               </tr>
               @endforeach
@@ -73,6 +94,7 @@
       language: {
         emptyTable: "Currently no data available in table"
       },
+      aaSorting: [],
       columnDefs: [
         {
           targets: 1,

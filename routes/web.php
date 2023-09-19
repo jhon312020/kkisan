@@ -107,6 +107,10 @@ Route::get('/secondaries/create',[SecondaryController::class, 'create'])->name('
 Route::post('secondaries/store',[SecondaryController::class, 'store'])->name('secondaries.store');
 Route::get('/secondaries/view/{id}', [SecondaryController::class, 'view'])->name('secondaries.view');
 
+Route::get('/secondaries/printLabel/{id}', [SecondaryController::class, 'printLabel'])->name('secondaries.printLabel');
+
+Route::get('/secondaryPrint/{id}', [SecondaryController::class, 'secondaryPrint'])->name('secondaryPrint');
+
 });
 
 //Added by MMC cron routes

@@ -24,10 +24,10 @@ class SecondaryLabel extends Model {
     }
 
     public function Product() {
-      return $this->belongsTo(Product::class, 'ProductCode', 'id');
+      return $this->belongsTo(Product::class, 'ProductCode', 'ProductCode');
     }
 
     public function PrimaryLabel() {
-      return $this->belongsTo(PrimaryLabel::class, 'primary_label', 'id');
+      return $this->belongsTo(PrimaryLabel::class, 'primary_label_id', 'id');
     }
 }

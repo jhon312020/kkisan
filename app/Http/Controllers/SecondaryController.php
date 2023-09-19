@@ -12,21 +12,25 @@ use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use PDF;
+
 
 class SecondaryController extends Controller {
   public function index() {
-    $secondaries = SecondaryLabel::paginate(10);
+    $secondaries = SecondaryLabel::orderBy('id','desc')->paginate(10);
     // dd($secondaries);
+    // $this->pr($secondaries->toArray());
+    // exit;
     return view('secondaries.index',['secondaries' => $secondaries]);
   }
 
   public function create() {
-    $products = Product::select('ProductCode')->where('is_secondary', 1)->where('local_status', 1)->get();
+    $products = Product::select('ProductCode')->where('is_secondary', 1)->where('local_status', 1)->orderBy('id', 'desc')->get();
     // $this->pr($products->toArray());
     // exit;
     $productCodes = $products->pluck('ProductCode')->toArray();
     //$this->pr($productIds);
-    $primaries = PrimaryLabel::whereIn('ProductCode',$productCodes)->where('local_status', 1)->get();
+    $primaries = PrimaryLabel::whereIn('ProductCode',$productCodes)->where('local_status', 1)->orderBy('id', 'desc')->get();
     // $this->pr($primaries);
     // exit;
     return view('secondaries.create', compact('products','primaries'));
@@ -41,53 +45,67 @@ class SecondaryController extends Controller {
 
   public function store(Request $request) {
     $totalPrimaryLabels = $request->quantity;
-    $this->pr($request->all());
     $validator = Validator::make($request->all(),[
       'labelid' => 'required',
       'quantity' => 'required|numeric',
       'label_numbers' => 'required|numeric|min:1|max:'.$totalPrimaryLabels,     
     ]);
-    exit;
     if ($validator->passes()) {
-      $totalSecQty = $request->label_numbers;
-      $totalSecRecords = intval($totalPrimaryLabels / $totalSecQty);
-      $primaryRecord = PrimaryLabel::sum('quantity') ?? 0;  
-      $secondaryRecord = SecondaryLabel::sum('primary_quantity') ?? 0;  
-      $lastRecord = $primaryRecord + $secondaryRecord
+      $labelsPerContainer = $request->label_numbers;
+      if ($labelsPerContainer > 1) {
+        $totalSecRecords = intval($totalPrimaryLabels / $labelsPerContainer);
+      } else {
+        $totalSecRecords = $labelsPerContainer;
+      }
+      $lastRecord = $this->getLastRecordCounter();
       $primary = PrimaryLabel::where('id', $request->labelid)->first();
       $product = Product::find($primary->Product->id)->first();
-      for ($counter=0; $counter<$totalSecRecords; $counter++) {
+      $prependCode = $this->getPrependCode('qrcode');
+      $secPrependCodeCont = $this->getPrependCode('container');
+      $primaryCodes = json_decode($primary->QRCode);
+      $serialNumbers = json_decode($primary->SerialNumber);
+      $prQrcodesOfContainer = array_chunk($primaryCodes, $labelsPerContainer);
+      $prSrNumsOfContainer = array_chunk($serialNumbers, $labelsPerContainer);
+      for ($counter = 0; $counter<$totalSecRecords; $counter++) {
         $lastRecord++;
-        $prependCode = $this->getPrependCode();
-        $qrCode = '2300' . str_pad($lastRecord, 6, '0', STR_PAD_LEFT);
+        $recordCounter = str_pad($lastRecord, 6, '0', STR_PAD_LEFT);
+        $qrCode = $prependCode.$recordCounter;
+        $SecondaryContainerCode = $secPrependCodeCont.$recordCounter;
         $secondaryRecords[] = array (
           "QRCode"=> $qrCode,
-          "SecondaryContainerCode"=> "",
-          "SecondaryLabelDetail"=> array (
-            "QRCode"=> $primary->QRCode,
-            "ProductCode"=> $product->ProductCode,
-            "BatchNumber"=> $primary->BatchNumber,
-            "SerialNumber"=> $primary->SerialNumber,
-            "ManufactureDate"=> $primary->BatchNumber,
-            "ExpiryDate"=> $primary->ExpiryDate  
-          )
+          "SecondaryContainerCode"=> $SecondaryContainerCode,
+          "ProductCode"=> $product->ProductCode,
+          "primary_label_id"=> $primary->id,
+          "primary_quantity"=> $totalSecRecords,
+          "label_type"=> $primary->label_type,
+          "created_at"=> date('Y-m-d H:s:i'),
+          "updated_at"=> date('Y-m-d H:s:i'),
+          "SecondaryLabelDetail"=> $this->formSecLabelDetail($prQrcodesOfContainer[$counter], $prSrNumsOfContainer[$counter], $product->ProductCode, $primary->BatchNumber, $primary->ManufactureDate, $primary->ExpiryDate)
         );
+      } 
+      if (SecondaryLabel::insert($secondaryRecords)) {
+        $postData = array('secondaryContainerDetail'=>$secondaryRecords);
+        $selectFields = array(
+          'id',
+          'QRCode',
+          'SecondaryContainerCode',
+          'SecondaryLabelDetail',
+        );
+        $objSecondaryRecords = SecondaryLabel::select($selectFields)
+          ->where('ProductCode',$product->ProductCode)
+          ->whereNull('api_sync_status')->get();
+        foreach($objSecondaryRecords as $secondaryRecord) {
+          $secondaryRecord["SecondaryLabelDetail"] = json_decode($secondaryRecord["SecondaryLabelDetail"], true);
+          $secondaryContainerDetail["secondaryContainerDetail"][] = $secondaryRecord;
+          $secQRCodes = array($secondaryRecord->QRCode);
+          $this->generateQrCodes($secQRCodes, 1, 1, "secondary", $secondaryRecord->id);
+        }
+        $apiResult = $this->postDatatoAPI("SaveSecondaryQRDetail", $secondaryContainerDetail, $this->accessToken);
+        if ($apiResult && isset($apiResult['success'])) {
+          SecondaryLabel::where('ProductCode',$product->ProductCode )->update(['api_sync_status' => true]);
+        }
+        Alert::success('Congrats', 'Secondary Successfully Added');
       }
-
-      exit;
-      $secondaries = new SecondaryLabel();
-      $secondaries->SecondaryContainerCode = $SecondaryCode;
-      $secondaries->Secondary_quantity = $request->label_numbers;
-      $secondaries->Secondary_QRCode = $SecondaryQRCode;
-      $secondaries->ProductCode = $product->id;
-      $secondaries->primary_label = $primary->id;
-      $secondaries->SerialNumber = $primary->SerialNumber;
-      $secondaries->QRCode = $primary->QRCode;
-      $secondaries->label_type = $primary->label_type;
-      $this->pr($secondaries);
-      // exit;
-      // $secondaries->save();
-      Alert::success('Congrats', 'Secondary Successfully Added');
       return redirect()->back();
     } else {
       Alert::error('Error', 'Some Error Occurred');
@@ -180,4 +198,57 @@ class SecondaryController extends Controller {
     }
     return $qrCodesArray;
   } 
+
+  function formSecLabelDetail($priQRCodes, $serialNumCodes, $productCode, $batchNumber, $manufactureDate, $expiryDate) {
+    $secLabelDetail = array();
+    foreach($priQRCodes as $key=>$QRCode) {
+      $secLabelDetail[] = array (
+        "QRCode"=> $QRCode,
+        "ProductCode"=> $productCode,
+        "BatchNumber"=> $batchNumber,
+        "SerialNumber"=> $serialNumCodes[$key],
+        "ManufactureDate"=> date('d/m/Y', strtotime($manufactureDate)),
+        "ExpiryDate"=> date('d/m/Y', strtotime($expiryDate))
+      );
+    }
+    return json_encode($secLabelDetail);
+  }
+
+  public function secondaryPrint(Request $request, $id) { 
+    // $this->pr($request->all());
+    $secondary = SecondaryLabel::find($id);
+    // $totalQuantity = $secondary->quantity;
+    // $primaryCodes = json_decode($secondary->SecondaryLabelDetail, true);
+    // $this->pr($secondary->toArray());
+    // exit;
+  
+    if ($secondary) {
+      // $qrCodesArray = $this->generateQrCodes($qrCodes, $labelFrom, $labelTo, 'primary',$id);
+      switch($secondary->LabelType->name) {
+        case 'green':
+          $paperSize = array(0, 0, 283, 425);
+        break;
+        case 'white':
+          $paperSize = array(0, 0, 283, 425);
+        break;
+        case 'medium':
+          $paperSize = array(0, 0, 171, 227);
+        break;
+        default:
+          $paperSize = array(0, 0, 140, 142);
+          // $paperSize = array(0,0,311.88,311.88);
+        break;
+      }
+      $pdf = PDF::loadView('secondaries.pdf', [
+        'secondary' => $secondary,
+      ]);
+      $pdf->setPaper($paperSize, 'landscape');
+      return $pdf->download('secondaries.pdf');
+    } else {
+      Alert::error('Error', 'Some Error Occurred');
+      // $this->pr($validator->errors());
+      // exit;
+      return redirect()->route('secondaries.printLabel',$id)->withErrors($validator)->withInput();
+    }
+  }
 }

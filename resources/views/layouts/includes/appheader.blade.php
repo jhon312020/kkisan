@@ -147,6 +147,9 @@
         background-color: #e91e63;
         color: white;
       }
+      .not_synced {
+        background-color: red !important;
+      }
     </style>
 
   </head>

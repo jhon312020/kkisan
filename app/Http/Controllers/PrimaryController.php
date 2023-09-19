@@ -12,19 +12,18 @@ use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\View;
 use PDF;
 
 class PrimaryController extends Controller {
 
   public function index() {
-    $primaries = PrimaryLabel::paginate(10);
+    $primaries = PrimaryLabel::orderBy('id','desc')->paginate(10);
     return view('primaries.index',['primaries' => $primaries]);
   }
 
   public function create() {
-    $products = Product::where('local_status', 1)->get();
+    $products = Product::where('local_status', 1)->orderBy('id', 'desc')->get();
     $types = LabelType::where('status', 1)->get();
     return view('primaries.create',compact('products','types'));
   }
@@ -71,14 +70,15 @@ class PrimaryController extends Controller {
     ]);
     if ($validator->passes()) {
       if ($request->quantity) {
-        $lastRecord = PrimaryLabel::sum('quantity') ?? 0;  
+        $lastRecord = $this->getLastRecordCounter();  
         $startSerialNumber = 0;   
         $quantity = $request->quantity;
         $apiManufactureDate = date('d/m/Y', strtotime($request->mfg_date));
         $apiExpiryDate = date('d/m/Y', strtotime($request->exp_date));
+        $prependCode = $this->getPrependCode('qrcode');
         for ($i = 0; $i < $quantity; $i++) {
           $lastRecord++;
-          $qrCode = '2300' . str_pad($lastRecord, 6, '0', STR_PAD_LEFT);
+          $qrCode = $prependCode.str_pad($lastRecord, 6, '0', STR_PAD_LEFT);
           $qrCodes[] = $qrCode;
           $serialNumbers[] = $startSerialNumber++;
           $primaryLabelData[] = array (
@@ -209,7 +209,7 @@ class PrimaryController extends Controller {
       $labelFrom = $request->from;
       $labelTo = $request->to;
       $qrCodes = json_decode($primary->QRCode);
-      $qrCodesArray = $this->generateQrCodes($qrCodes, $labelFrom, $labelTo);
+      $qrCodesArray = $this->generateQrCodes($qrCodes, $labelFrom, $labelTo, 'primary',$id);
       switch($primary->LabelType->name) {
         case 'green':
           $paperSize = array(0, 0, 283, 425);
@@ -237,27 +237,5 @@ class PrimaryController extends Controller {
       // exit;
       return redirect()->route('primaries.printLabel',$id)->withErrors($validator)->withInput();
     }
-  }
-
-  public function generateQrCodes($qrCodes, $labelFrom, $labelTo) {
-    $qrCodesArray = [];
-    $counter = 0;
-    $labelFrom--;
-    for ($counter = $labelFrom; $counter<$labelTo; $counter++) {
-      $value = $qrCodes[$counter];
-      $qrCodeValue = "01" . str_pad($value, 10, '0', STR_PAD_LEFT);
-      $filePath = public_path("qrcodes");
-      // contiune;
-      $fileName = "qrcode_$counter.svg";
-      $filefullPath = $filePath.DIRECTORY_SEPARATOR.$fileName;
-      $qrCode = QrCode::generate("$qrCodeValue", $filefullPath);
-      // $qrCode = QrCode::format('png')->generate("$qrCodeValue", $filefullPath);
-      $qrCodesArray[] = [
-        'qrCode' => $filefullPath,
-        'value' => $qrCodeValue,
-      ];            
-      // file_put_contents($filePath, $qrCode);
-    }
-    return $qrCodesArray;
   }
 }
